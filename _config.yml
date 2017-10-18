@@ -1,12 +1,12 @@
 # Basic
 title: tomsun28
 subtitle: 
-description: welcome
+description: 排队上天堂
 # 头像里面的标题
 avatarTitle: tomsun28
 # 头像里面的描述
 avatarDesc: 
-url: "http://baixin.io"
+url: "http://usthe.com"
 
 # Comment
 comment:
@@ -15,30 +15,22 @@ comment:
 
 # Social
 social:
-    weibo: 5366874726 
-    github: leopardpan
+    weibo: vive 
+    github: tomsun28
     # twitter: 
-    mail: leopardpan@icloud.com
+    mail: tomsun28@outlook.com
 
 # 百度统计 
 # 使用博客模板请去掉或者更换 id 
 baidu:
-    id: 8ba1c6be0953b6f9c2ba38e57f615421  
-
-# Google Analytics
-# 使用博客模板请去掉或者更换 id
-ga:
-    id: UA-84134159-3   
-    host: auto  
+    id: 423830c130ac0dbedf4f3623212bf5b1  
 
 
 # 《----------------- 上面的信息修改成你自己的 ---------------------------》
 #
 #
 #  _post/ 下的文章更换成你自己的文章
-#  帮忙star一下，感谢~😆 地址： https://github.com/leopardpan/leopardpan.github.io
-#
-#
+
 # 《--------------- 下面的信息可以自行选择是否修改 ------------------------》
 
 
