@@ -10,12 +10,12 @@ url: "http://usthe.com"
 
 # Comment
 comment:
-    disqus: leopard
-    # uyan: 2143225  # 有言id,登录有言官网申请
+    # disqus: 
+    uyan: 2146669  # 有言id,登录有言官网申请
 
 # Social
 social:
-    weibo: vive 
+    weibo: tomsun28 
     github: tomsun28
     # twitter: 
     mail: tomsun28@outlook.com
