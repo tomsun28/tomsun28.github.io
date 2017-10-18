@@ -10,5 +10,4 @@ title: about me
 
 
 
-{% include comments.html %}
 
