@@ -29,7 +29,8 @@
         {% if site.subtitle %}
         <span class="panel-cover__subtitle panel-subtitle">{{site.subtitle}}</span>
         {% endif %}
-        <!--<hr class="panel-cover__divider" />-->
+        <hr class="panel-cover__divider" />
+        <hr />
         <hr />
         <p class="panel-cover__description">{{ site.description }}</p>
         <!--<hr class="panel-cover__divider panel-cover__divider--secondary" />-->
@@ -44,9 +45,9 @@
           <div>
             <nav class="cover-navigation cover-navigation--primary">
               <ul class="navigation">
-                <li class="navigation__item"><a href="/#blog" title="{{site.blog_button.description}} style=" color:#666; font-size:12px;" " class="blog-button">{{site.blog_button.title}}</a></li>
+                <li class="navigation__item"><a href="/#blog" title="{{site.blog_button.description}} style=" color:#666; font-size:14px;" " class="blog-button">{{site.blog_button.title}}</a></li>
                 {% for item in site.nav %}
-                  <li class="navigation__item"><a href="{{item.url}} style=" color:#666; font-size:12px;" " title="{{item.description}}">{{item.title}}</a></li>
+                  <li class="navigation__item"><a href="{{item.url}} style=" color:#666; font-size:14px;" " title="{{item.description}}">{{item.title}}</a></li>
                 {% endfor %}
               </ul>
             </nav>
