@@ -44,7 +44,7 @@ tag: oracle
 	substr('my name is tomsun28',1,5)返回'my na' 0和1都表示从第一个字符开始截取
 	substr('my name is tomsun28',-1,5)返回'sun28' 表示从右端第一个字符开始截取5个字符
 
-**||**
+**`||`**
 
 	字符串连接符 'aaaa'||'bbbb' = 'aaaabbbb'
 
@@ -75,6 +75,7 @@ tag: oracle
 	on (t1.userid = tw.userid)
 	when matched then update set t1.id = tw.id
 	when mot matched then insert values(tw.userid,tw.id);
+
 - - -
 - - -
 
