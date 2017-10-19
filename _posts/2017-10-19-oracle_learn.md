@@ -76,8 +76,13 @@ tag: oracle
 	when matched then update set t1.id = tw.id
 	when mot matched then insert values(tw.userid,tw.id);
 
+<br>
+
+
 - - -
 - - -
+
+<br>
 
 **误删除表空间test的数据文件后，需要将该表空间删除重建**
 
@@ -105,6 +110,8 @@ tag: oracle
 	startdown
 
 
-
+<br>
+<br>
+<br>
 
 *转载请注明* [from tomsun28](http://usthe.com)
