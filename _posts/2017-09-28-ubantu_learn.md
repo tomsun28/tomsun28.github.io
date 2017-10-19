@@ -1,6 +1,6 @@
 ---
 layout: post
-title: ubantu-learn
+title: ubantu_learn
 date: 2017-09-28
 tag: linux
 ---
