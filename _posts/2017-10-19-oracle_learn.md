@@ -76,8 +76,24 @@ tag: oracle
 	when matched then update set t1.id = tw.id
 	when mot matched then insert values(tw.userid,tw.id);
 
-<br>
+**CURSOR**
 
+	游标是SQL的一个内存工作区。一些情况需要将数据从存放在磁盘的数据库表调到计算机内存中处理，最后将处理结果返回数据库或显示出来，提高速度。这就用到游标，作用就是用于临时存储从数据库中提取的数据块。CURSOR类型：静态游标--显示游标和隐式游标，动态游标--REF游标,其是一种引用类型类似于指针。
+	显示游标的for遍历循环
+	declare
+		cursor cur is select * from temp where temp.id > 0;
+		cur_var temp%rowtype;
+	begin
+		for cur_var in cur loop
+		exit when cur%notfound;
+		数据处理;
+	end loop;
+	exception
+		出错处理;
+	end;
+
+
+<br>
 
 - - -
 - - -
