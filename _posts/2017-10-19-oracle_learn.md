@@ -91,6 +91,16 @@ tag: oracle
 	exception
 		出错处理;
 	end;
+	
+	带参数的cursor
+	cursor c_user(c_id number)is select name from user where typeid=c_id;
+	open c_user;
+	    loop
+	        fetch c_user into v_name;
+	        exit fetch c_user%notfound;
+	            do something;
+	    end loop;
+	close c_user;
 
 
 <br>
@@ -124,6 +134,43 @@ tag: oracle
 	conn username
 	startup  这里环境变量export要设置正确的数据库SID，就是启动环境变量ORACLE_SID所对应的那个数据库实例
 	startdown
+
+<br>
+- - -
+- - -
+<br>
+
+**oracle存储过程基本结构**
+
+	create or replace procedure procedure_name(startData in integer,endData in varchar2,outData out varchar2,参数名 in/out 参数类型)is
+	v_startData varchar2(10);
+	v_endData   varchar2(10);
+	变量名       变量类型;
+	begin
+	//变量赋值:
+	v_startData:=startData;
+	v_endData:=endData;
+	//if判断
+	if v_startData = 1 then
+	    begin
+	        do something;
+	    end;
+	end if;
+	//while循环
+	while v_startData <>1 loop
+	    begin
+	    do something;
+	    end;
+	end loop;
+	
+	//cursor用法见上
+	
+	EXCEPTION
+	    when others then
+	        异常错误处理;
+	        do something;
+	        rollback;//一般情况回滚
+	end procedure_name;
 
 
 <br>
