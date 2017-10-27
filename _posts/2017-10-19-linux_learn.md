@@ -90,6 +90,14 @@ tag: linux
 	. /home/db2inst1/sqllib/db2profile
 	export PATH=$ORACLE_HOME/bin:$ORACLE_HOME/OPatch:/bin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/X11R6/bin:$HOME/bin:/home/db2inst1/sqllib/bin:/home/db2inst1/sqllib/adm:/home/db2inst1/sqllib/misc;
 
+**FTP**
+
+	ftp remote_path  //连接到远程IP
+	ftp> status      //显示当前ftp状态
+	ftp> get filename //复制远程的文件到本地
+	ftp> put filename //复制本地文件到远程服务器
+	ftp> quit        //关闭连接
+
 <br>
 <br>
 <br>
