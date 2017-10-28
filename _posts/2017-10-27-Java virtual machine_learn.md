@@ -21,7 +21,7 @@ tag: java
 
 <br>
 
-![](/images/posts/jvm//image1.png)
+![](/images/posts/jvm/image1.PNG)
 
 <br>
 JVM的内部体系结构分为三个部分,分别为类装载器子系统,运行时数据区和执行引擎。
@@ -34,7 +34,7 @@ JVM的内部体系结构分为三个部分,分别为类装载器子系统,运行
   每个Java虚拟机都有一个类加载器,负责查找并加载程序中的类,接口,并给其确定唯一的名字。Java虚拟机有两种类装载器：系统类装载器和用户自定义类装载器,系统类装载器是JVM实现的一部分,用户自定义类装载器是Java程序的一部分,其必须是类装载器ClassLoader类的子类。
 <br>
 
-![](/images/posts/jvm//image2.png)
+![](/images/posts/jvm/image2.PNG)
 
 <br>
 
@@ -68,7 +68,7 @@ JVM的内部体系结构分为三个部分,分别为类装载器子系统,运行
 ### 运行时数据区：方法区,堆,Java栈,PC寄存器,本地方法栈
 
 <br>
-![](/images/posts/jvm//image3.png)
+![](/images/posts/jvm/image3.PNG)
 <br>
 
 * #### 方法区——线程共享
@@ -107,7 +107,7 @@ JVM的内部体系结构分为三个部分,分别为类装载器子系统,运行
 >  * 局部变量区
 >  >  局部变量区被组织为以字长为单位,从0开始计数的数组。字节码指令通过从0开始的索引使用其中的数据。类型为int, float, reference和returnAddress的值在数组中占据一项,而类型为byte, short和char的值在存入数组前都被转换为int值,也占据一项。但类型为long和double的值在数组中却占据连续的两项。如下图：
 >  >  <br>
->  >  ![](/images/posts/jvm//image4.png)
+>  >  ![](/images/posts/jvm/image4.PNG)
 >  >  <br>
 >  * 操作数栈
 >  >  与局部变量区一样,操作数栈被组织成一个以字长为单位的数组,其通过标准的栈操作访问。
