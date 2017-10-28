@@ -21,7 +21,7 @@ tag: java
 
 <br>
 
-![](images/posts/jvm/image1.png)
+![](/images/posts/jvm/image1.png)
 
 <br>
 JVM的内部体系结构分为三个部分,分别为类装载器子系统,运行时数据区和执行引擎。
@@ -33,7 +33,9 @@ JVM的内部体系结构分为三个部分,分别为类装载器子系统,运行
 <br>
   每个Java虚拟机都有一个类加载器,负责查找并加载程序中的类,接口,并给其确定唯一的名字。Java虚拟机有两种类装载器：系统类装载器和用户自定义类装载器,系统类装载器是JVM实现的一部分,用户自定义类装载器是Java程序的一部分,其必须是类装载器ClassLoader类的子类。
 <br>
+
 ![](/images/posts/jvm/image2.png)
+
 <br>
 
 * 启动类装载器(bootstrap calss loader): 其用来加载Java的核心库,用原生代码来实现的,没有继承java.lang.ClassLoader 
