@@ -3,7 +3,7 @@ layout: page
 title: about me
 ---
 
-学过的东西会忘，所有得记下来。
+学过的东西会忘，所以得记下来。
 <p>
 。。。
 <p>
@@ -27,6 +27,62 @@ title: about me
 <br  />
 
 <br  />
+
+<br  />
+
+<br  />
+
+<br  />
+
+<br  />
+
+<br  />
+
+<br  />
+
+<br  />
+
+<br  />
+
+<br  />
+
+<br  />
+
+<br  />
+
+<br  />
+
+<br  />
+
+<br  />
+
+<br  />
+
+<br  />
+
+<br  />
+
+<br  />
+
+<br  />
+
+<br  />
+
+<br  />
+
+<br  />
+
+<br  />
+
+<br  />
+
+<br  />
+
+<br  />
+
+<br  />
+
+
 
 
 
