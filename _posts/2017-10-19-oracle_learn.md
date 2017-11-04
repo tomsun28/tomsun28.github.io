@@ -102,6 +102,18 @@ tag: oracle
 	    end loop;
 	close c_user;
 
+**in/exists与not in/not exists**
+
+	in是把外表和内表作连接,是对外表作loop循环。对于效率,查询的两个表大小相当则效率差别不大。若两个表一大一小,则子查询表大的用exists,子查询表小的用in。
+	例如表A小,表B大
+	select * from A where name in (select name from B)---效率低
+	select * from A where exists (select name from B where name=A.name)---效率高  
+	
+	not in 会调用子查询,如果子查询字段任意记录有空值,则查询不会返回任何记录。尽量使用not exists。
+	select * from A where name not in(select name from B)---执行结果无
+	select 8 from A where not exists(select 1 from B where B.name=A.name)---执行结果正确
+
+
 
 <br>
 
