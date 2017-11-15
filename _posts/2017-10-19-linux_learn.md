@@ -51,6 +51,7 @@ tag: linux
 
 **权限**
 
+	ls -l temp  查看temp文件权限详细
 	chown -R oracle temp 将temp整个文件夹授权给oracle用户
 	chmod -R 444 filename 修改文件权限
 	444 r--r--r--
@@ -61,6 +62,14 @@ tag: linux
 	744 rwxr--r--
 	755 rwxr-xr-x 
 	777 rwxrwxrwx 
+	chmod o+w temp 表示给其他人授予写temp文件的权限
+	chmod go-rw temp 表示删除所有者所在群组和其他人对temp文件的读写权限
+	+为增加,-为删除
+	u代表所有者(user) g代表所有者所在的组群(group) o代表其他人,但不是u和g (other) a代表全部的人,也就是包括u,g和o
+	
+	r表示文件可以被读(read) w表示文件可以被写(write) x表示文件可以被执行
+	
+
 
 <br>
 
