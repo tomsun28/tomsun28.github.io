@@ -68,7 +68,7 @@ tag: linux
 	u代表所有者(user) g代表所有者所在的组群(group) o代表其他人,但不是u和g (other) a代表全部的人,也就是包括u,g和o
 	
 	r表示文件可以被读(read) w表示文件可以被写(write) x表示文件可以被执行
-	
+
 
 
 <br>
@@ -106,6 +106,67 @@ tag: linux
 	ftp> get filename //复制远程的文件到本地
 	ftp> put filename //复制本地文件到远程服务器
 	ftp> quit        //关闭连接
+
+**shell**  
+
+```
+
+#!/bin/bash
+
+#shell参数传递
+echo "第一个参数为：$1 "
+echo "参数个数为：$# "
+echo "传递的参数作为一个字符串显示：$* "
+
+#shell基本运算
+#expr 是表达式计算工具,使用它完成表达式求值操作
+#变量名和等号之间不能有空格
+val=`expr 3 + 3`  
+val2=`expr $1 + $2`
+echo "$val2  $val"
+
+if[$val == $val2]
+then
+    echo "val等于val2";
+else
+    echo "val不等于val2"
+fi
+#文件测试判断运算
+file="./test.sh"
+if [ -r $file ]
+then
+   echo "文件可读"
+else
+   echo "文件不可读"
+fi
+
+#echo后面""可以显示转义字符,''原样输出
+echo "\"hello tom\""  
+echo "将内容定向到文件中" > filename 
+echo `date` #显示命令结果
+
+for loop in 1 2 3 4 5 6
+do 
+    echo "the number is : $loop " 
+done
+
+a=8;
+while(($a<=10))
+do
+    echo $a 
+	let "a++"   #let命令用于执行一个或多个表达式
+done
+
+command > file  #覆盖file文件原本的内容
+command >> file #文件末尾累加输入,不会覆盖
+
+source file.sh  #文件包含其他file文件内容
+
+脚本执行：
+$ chmod +x test.sh
+$ ./test.sh 1 2 3
+
+```
 
 <br>
 <br>
