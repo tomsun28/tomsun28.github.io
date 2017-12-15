@@ -109,7 +109,7 @@ tag: linux
 
 **shell**  
 
-```
+````
 
 #!/bin/bash
 
@@ -166,8 +166,73 @@ source file.sh  #文件包含其他file文件内容
 $ chmod +x test.sh
 $ ./test.sh 1 2 3
 
-```
+````
 
+**cat**  
+
+````
+#cat命令输出显示整个文件
+cat file.log #显示打印整个file.log
+````
+
+**grep**  
+
+````
+#grep命令使用正则表达式搜索匹配文本,把匹配的行打印
+cat file.log | grep '出现错误'  #grep将file.log中的有"出现错误"字段的行打印
+
+````
+
+**wc**  
+
+````
+#wc命令为统计指定文件的字节数,字数,行数。
+wc -l #统计行数
+wc -c #统计字节数
+wc -w #统计字数
+num=`cat file.log | grep '出现错误' | wc -l` #统计file.log中有'出现错误'字段的行数
+
+````
+
+**tr**
+
+````
+#tr命令对来自标准输入的字符进行替换
+echo "HELLO TOM" | tr 'A-Z' 'a-z' #将输入字符由大写转换为小写
+
+````
+
+**linux遍历**  
+
+````
+filelist=`ls /home/temp*.sh`  #获取home目录下所有temp开头的.sh文件
+for file in $filelist         #遍历执行
+do
+    sh $file 
+done
+````
+
+**awk**
+
+````
+#awk强大的文本分析工具,把文件逐行读入,以给定的分隔符(默认为空格)将每行切片,切片的部分再进行各种分析处理
+#awk适合对文本列操作
+awk [-F filed-separator] 'commands' input-files
+awk -F ":" 'print $2' temp.log           #显示输出用":"分隔符将temp.log分割后的第二列所有内容
+cat /etc/passwd | awk -F ":" 'print $1'  #显示输出用":"分隔符将passwd分割后的第一列所有内容
+
+````
+
+**sed**  
+
+````
+#sed命令用来自动编辑文件,简化对文件的反复操作,对文件内容的编辑,替换,读取
+#sed适合对文本行操作
+sed [options] 'command' files
+sed -n '1p' temp.log                          #打印temp.log的第一行
+awk -F ":" 'print $2' temp.log | sed -n '1p'  #打印输出temp.log的第二列第一行的内容
+
+````
 <br>
 <br>
 <br>
