@@ -33,7 +33,16 @@ tag: linux
  - sudo apt-get autoclean 清理无用包
  - sudo add-apt-respository ppa:user/ppa-name 添加PPA源
  - sudo apt-get update 添加源之后更新
- - sudo add-apt-repository -r ppa:user/ppa-name 删除源,之后进人/etc/apt/sources.list.d目录将PPA源对应文件删除
+ - sudo add-apt-repository -r ppa:user/ppa-name 删除源,之后进人/etc/apt/sources.list.d目录将PPA源对应文件删除  
+
+**ubuntu源**  
+1. cd /ect/apt 查看是否有sources.list文件
+2. sudo cp sources.list sources.list.bak 备份
+3. sudo vi sources.list 编辑内容为其他ubuntu的源 eg: "deb http://archive.ubuntu.com/ubuntu precise main universe"  
+
+
+
+
 
 
 
