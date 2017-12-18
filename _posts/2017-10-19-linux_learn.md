@@ -179,7 +179,8 @@ cat file.log #显示打印整个file.log
 
 ````
 #grep命令使用正则表达式搜索匹配文本,把匹配的行打印
-cat file.log | grep '出现错误'  #grep将file.log中的有"出现错误"字段的行打印
+cat file.log | grep '出现错误'    #grep将file.log中的有"出现错误"字段的行打印
+grep "SQLSTATE"  *.log          #查找所有后缀名为.log的日志文件并且打印出含有字符串SQLSTATE 的行
 
 ````
 
@@ -233,6 +234,28 @@ sed -n '1p' temp.log                          #打印temp.log的第一行
 awk -F ":" 'print $2' temp.log | sed -n '1p'  #打印输出temp.log的第二列第一行的内容
 
 ````
+
+**set**  
+
+````
+#set :Linux set命令用于设置shell,能设置所用shell的执行方式依照不同的需求进行设置。
+项目实例中主要是在创建控制文件前对shell的一些设置。
+````
+
+**spool**  
+
+````
+#spool是Oracle数据库交互工具SQLPULS的文件操作命令,其可以将屏幕显示及查询的结果输入到指定的文本文件
+在项目实例中使用spool操作生成对应的控制文件
+````
+
+**tee**  
+
+````
+#tee :这个命令用于读取标准输入的数据,并将其内容输出到指定的文件中
+tee –a file  #就是将获得的内容附加到文件file的后面
+````
+
 <br>
 <br>
 <br>
