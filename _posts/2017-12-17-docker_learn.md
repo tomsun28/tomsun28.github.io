@@ -1,11 +1,17 @@
 ---
 layout: post
-title:  Docker入坑 
+title:  Docker学习 
 date: 2017-12-17
 tag: others
 ---
 
 ## Docker   
+
+
+
+**ubantu安装docker**  
+
+[官方教程](https://docs.docker.com/engine/installation/linux/docker-ce/ubuntu/#supported-storage-drivers)
 
 **入坑docker嘿嘿**  
 
