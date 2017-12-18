@@ -256,6 +256,16 @@ awk -F ":" 'print $2' temp.log | sed -n '1p'  #打印输出temp.log的第二列�
 tee –a file  #就是将获得的内容附加到文件file的后面
 ````
 
+**ssh**  
+
+````
+#连接到远程主机
+ssh userName@remoteServerIp
+#连接到远程主机指定的端口22
+ssh userName@remoteServerIp -p 22
+
+````
+
 <br>
 <br>
 <br>
