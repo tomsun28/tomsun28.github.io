@@ -191,19 +191,13 @@ hahaha为上面Jenkins设置的身份令牌
 
 
 
-
+<br>
 **持续入坑**  
 
 <br>
 <br>
 <br>
 
-*参考来自*[使用Docker构建持续集成与自动部署的Docker集群](http://blog.csdn.net/java_dyq/article/details/51997024)
-*转载请注明* [from tomsun28](http://usthe.com)
-````
+*参考来自*[使用Docker构建持续集成与自动部署的Docker集群](http://blog.csdn.net/java_dyq/article/details/51997024)  
+*转载请注明* [from tomsun28](http://usthe.com)  
 
-````
-
-````
-
-````
