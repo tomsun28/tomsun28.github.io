@@ -39,6 +39,22 @@ systemctl restart docker 重启docker
 
 ````
 
+**docker 构建mariadb**  
+
+````
+#用官方镜像启动mariadb,将存放数据库信息的文件夹/var/lib/mysql映射到本地
+docker run -d -p 3306:3306 --name mariadb -e TIMEZONE=Asia/Shanghai -v /mnt/dockerWorkspace/mysql:/var/lib/mysql \
+-e MYSQL_ROOT_PASSWORD=admin  mariadb
+
+#进入mariadb容器
+docker exec -it mariadb /bin/bash
+
+#登录数据库
+mysql -uroot -padmin
+
+````
+
+
 **Dockerfile----基于Ubuntu基础镜像生成的Tomcat中间件镜像**  
 
 ````
