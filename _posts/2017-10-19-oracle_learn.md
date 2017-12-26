@@ -113,6 +113,10 @@ tag: oracle
 	select * from A where name not in(select name from B)---执行结果无
 	select 8 from A where not exists(select 1 from B where B.name=A.name)---执行结果正确
 
+**级联查询**  
+
+	select * from tablename start with subId = '3302' connect by prior subId=parentId ---查询一个节点下面的所有关联节点
+	subId为子节点的ID parentId为父节点ID
 
 
 <br>
