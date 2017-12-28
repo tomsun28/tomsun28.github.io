@@ -151,6 +151,14 @@ tag: oracle
 	startup  这里环境变量export要设置正确的数据库SID，就是启动环境变量ORACLE_SID所对应的那个数据库实例
 	startdown
 
+**oracle用户解锁**
+
+	sqlplus /nolog
+	conn / as sysdba
+	alter user userName account unlock;
+
+
+
 <br>
 - - -
 - - -
