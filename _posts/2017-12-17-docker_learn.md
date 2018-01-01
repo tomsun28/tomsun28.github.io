@@ -91,8 +91,10 @@ EXPOSE 22
 EXPOSE 8080
 
 #设置tomcat8初始化运行,ssh终端服务器作为后台运行
-ENTRYOINT service tomcat8 start && usr/sbin/sshd -D
+ENTRYPOINT service tomcat8 start && usr/sbin/sshd -D
 
+
+#docker公共镜像仓库的dordoka/tomcat可以用
 
 ````
 
@@ -131,7 +133,7 @@ docker run -d -p 8080:8080 --name jenkins --restart=always \
 ````
 #VERSION 1.0.0
 #基础镜像为tomcat
-FROM tomcat:8-jre8
+FROM 182.61.59.218:5000/tomcat:1.0
 
 #签名
 MAINTAINER tomsun28 "tomsun28@outlook.com"
