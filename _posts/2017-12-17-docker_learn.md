@@ -132,16 +132,22 @@ docker run -d -p 8080:8080 --name jenkins --restart=always \
 
 ````
 #VERSION 1.0.0
-#基础镜像为tomcat
+#基础镜像为tomcat,从我搭建镜像仓库拉取tomcat镜像
 FROM 182.61.59.218:5000/tomcat:1.0
 
 #签名
 MAINTAINER tomsun28 "tomsun28@outlook.com"
 
 
-#加入WAR包到tomcat下
+#加入WAR包到tomcat下(1),官方tomcat镜像的tomcat位置在/usr/local/tomcat
 RUN rm -rf /usr/local/tomcat/webapps
 ADD ./target/WebHelloWorld.war /usr/local/tomcat/webapps/WebHelloWorld.war
+
+#加入WAR包到tomcat下(2)自己的tomcat:1.0镜像的tomcat位置在/opt/tomcat
+RUN rm -rf /opt/tomcat/webapps
+ADD ./target/WebHelloWorld.war /opt/tomcat/webapps/WebHelloWorld.war
+
+
 ````
 
 **Jenkins细节配置**
@@ -168,7 +174,7 @@ ADD ./target/WebHelloWorld.war /usr/local/tomcat/webapps/WebHelloWorld.war
 
 #docker docker hub仓库地址,之后把生成的镜像上传到  registry or docker hub
 REGISTRY_URL=182.61.59.218:5000
-#docker login --username tomsun28 --password usthecom123
+#docker login --username tomsun28 --password xxxx
 
 #根据时间生成版本号
 TAG=$REGISTRY_URL/$JOB_NAME:`date +%y%m%d-%H-%M`
