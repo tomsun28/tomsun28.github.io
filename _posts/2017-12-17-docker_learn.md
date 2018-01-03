@@ -220,7 +220,7 @@ TAG=$REGISTRY_URL/$JOB_NAME:`date +%y%m%d-%H-%M`
 #使用maven 镜像进行编译 打包出 war 文件
 docker run --rm --name mvn -v /mnt/dockerWorkspace/maven:/root/.m2 \
 -v /mnt/dockerWorkspace/jenkins_home/workspace/$JOB_NAME:/usr/src/mvn -w /usr/src/mvn/ \
-maven:3.3.3-jdk-8 mvn clean install -Dmaven.test.skip=true
+tomsun28/maven:1.0 mvn clean install -Dmaven.test.skip=true
 
 #使用放在项目下面的Dockerfile打包生成镜像
 docker build -t $TAG $WORKSPACE/.
