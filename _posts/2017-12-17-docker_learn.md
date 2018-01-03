@@ -59,42 +59,80 @@ mysql -uroot -padmin
 
 ````
 
-#VERSION 1.0.0
-#基础镜像为ubuntu
-FROM ubuntu
+# VERSION 1.0.0
+# 基础镜像为ubuntu:16.04
+FROM ubuntu:16.04
 
-#签名
-MAINTAINER tomsun28 "tomsun28@outlook.com"
+MAINTAINER tomsun28  <www.usthe.com>
 
-#RUN一次就会构建一层镜像,层次多会产生不必要的臃肿
-#更新源,安装ssh server
-RUN echo "deb http://archive.ubuntu.com/ubuntu precise main universe" > /etc/apt/sources.list \
-    && apt-get update \
-	&& apt-get install -y openssh-server \
-	&& mkdir -p /var/run/sshd \
-#设置root ssh远程登录密码
-    && echo "root:root" | chpasswd \
-#安装ppa源,一次性安装vim,wget,curl,java,tomcat
-    && apt-get install python-software-properties \
-	&& add-apt-repository ppa:webupd8team/java \
-	&& apt-get update \
-	&& apt-get install -y vim wget curl oracle-java8-installer tomcat8 \
-#设置JAVA_HOME环境变量
-    && update-alternatives --dispaly java \
-	&& echo "JAVA_HOME=/usr/lib/jvm/java-8-oracle" >> /ect/environment \
-	&& echo "JAVA_HOME=/usr/lib/jvm/java-8-oracle" >> /ect/default/tomcat8
+ENV TOMCAT_VERSION 8.0.48
 
 
-#开放SSH的22端口
-EXPOSE 22
-#开放tomcat的8080端口
+# 设置系统格式UTF8  
+ENV LANG=C.UTF-8
+
+
+# 设置系统时区 shanghai
+ENV TZ=Asia/Shanghai
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+
+# 更新源前的操作
+RUN echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections
+RUN echo debconf shared/accepted-oracle-license-v1-1 seen true | debconf-set-selections
+
+# 更新APT源 安装依赖,安装 oracle jdk8,wget,unzip,tar
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends software-properties-common && \
+    add-apt-repository ppa:webupd8team/java && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends oracle-java8-installer  wget unzip tar && \
+    rm -rf /var/lib/apt/lists/* && \
+    rm -rf /var/cache/oracle-jdk8-installer
+
+# 设置JAVA_HOME环境变量 
+ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
+
+# 安装tomcat
+RUN wget --quiet --no-cookies http://apache.rediris.es/tomcat/tomcat-8/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.tar.gz -O /tmp/tomcat.tgz && \
+tar xzvf /tmp/tomcat.tgz -C /opt && \
+mv /opt/apache-tomcat-${TOMCAT_VERSION} /opt/tomcat && \
+rm /tmp/tomcat.tgz && \
+rm -rf /opt/tomcat/webapps/examples && \
+rm -rf /opt/tomcat/webapps/docs && \
+rm -rf /opt/tomcat/webapps/ROOT
+
+# 配置tomcat user
+ADD tomcat-users.xml /opt/tomcat/conf/
+
+# tomcat环境变量
+ENV CATALINA_HOME /opt/tomcat
+ENV PATH $PATH:$CATALINA_HOME/bin
+
+# 暴露端口
 EXPOSE 8080
+EXPOSE 8009
 
-#设置tomcat8初始化运行,ssh终端服务器作为后台运行
-ENTRYPOINT service tomcat8 start && usr/sbin/sshd -D
+# 工作目录
+WORKDIR /opt/tomcat
 
+# run 镜像之后启动tomcat
+CMD ["/opt/tomcat/bin/catalina.sh", "run"]
 
-#docker公共镜像仓库的dordoka/tomcat可以用
+*******************************
+#tomcat配置文件 tomcat-users.xml
+
+<?xml version='1.0' encoding='utf-8'?>
+<tomcat-users>
+  <role rolename="admin-gui"/>
+  <role rolename="admin-script"/>
+  <role rolename="manager-gui"/>
+  <role rolename="manager-status"/>
+  <role rolename="manager-script"/>
+  <role rolename="manager-jmx"/>
+  <user name="admin" password="admin" roles="admin-gui,admin-script,manager-gui,manager-status,manager-script,manager-jmx"/>
+</tomcat-users>
+
 
 ````
 
