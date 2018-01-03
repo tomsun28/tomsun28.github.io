@@ -158,7 +158,7 @@ echo "{ "insecure-registries":["182.61.59.000:5000"] }" >> /etc/docker/daemon.js
 #构建Jenkins
 docker run -d -p 8080:8080 --name jenkins --restart=always \
 -v /mnt/dockerWorkspace/jenkins_home:/var/jenkins_home \
--v /var/run/docker.sock:/var/run/docker.sock  jayqqaa12/jenkins
+-v /var/run/docker.sock:/var/run/docker.sock  tomsun28/jenkins
 #参数/mnt/dockerWorkspace/jenkins_home:/var/jenkins_home将目录映射到本地磁盘
 #参数/var/run/docker.sock:/var/run/docker.sock映射本地docker,这样就能在jenkins容器使用docker
 默认用户密码 admin/admin
@@ -171,7 +171,7 @@ docker run -d -p 8080:8080 --name jenkins --restart=always \
 ````
 #VERSION 1.0.0
 #基础镜像为tomcat,从我搭建镜像仓库拉取tomcat镜像
-FROM 182.61.59.218:5000/tomcat:1.0
+FROM tomsun28/tomcat:1.1
 
 #签名
 MAINTAINER tomsun28 "tomsun28@outlook.com"
@@ -181,7 +181,7 @@ MAINTAINER tomsun28 "tomsun28@outlook.com"
 RUN rm -rf /usr/local/tomcat/webapps
 ADD ./target/WebHelloWorld.war /usr/local/tomcat/webapps/WebHelloWorld.war
 
-#加入WAR包到tomcat下(2)自己的tomcat:1.0镜像的tomcat位置在/opt/tomcat
+#加入WAR包到tomcat下(2)自己的tomcat:1.1镜像的tomcat位置在/opt/tomcat
 RUN rm -rf /opt/tomcat/webapps
 ADD ./target/WebHelloWorld.war /opt/tomcat/webapps/WebHelloWorld.war
 
