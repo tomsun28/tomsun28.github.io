@@ -235,7 +235,7 @@ fi
 
 #用最新版本的镜像运行容器
 
-docker run -d -p 80:8080 --name $JOB_NAME $TAG
+docker run -d -p 80:8080 --name $JOB_NAME -v /mnt/dockerWorkspace/tomcat/logs:/opt/tomcat/logs $TAG
 
 ````
 
