@@ -43,8 +43,8 @@ systemctl restart docker 重启docker
 
 ````
 #用官方镜像启动mariadb,将存放数据库信息的文件夹/var/lib/mysql映射到本地
-docker run -d -p 3306:3306 --name mariadb -e TIMEZONE=Asia/Shanghai -v /mnt/dockerWorkspace/mysql:/var/lib/mysql \
--e MYSQL_ROOT_PASSWORD=admin  mariadb
+docker run -d -p 3306:3306 --restart=always --name mariadb -e TIMEZONE=Asia/Shanghai -v /mnt/dockerWorkspace/mysql:/var/lib/mysql \
+-e MYSQL_ROOT_PASSWORD=admin  tomsun28/mariadb:1.0
 
 #进入mariadb容器
 docker exec -it mariadb /bin/bash
