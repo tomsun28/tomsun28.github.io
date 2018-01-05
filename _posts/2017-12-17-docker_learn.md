@@ -211,7 +211,7 @@ ADD ./target/WebHelloWorld.war /opt/tomcat/webapps/WebHelloWorld.war
 #build in jenkins sh
 
 #docker docker hub仓库地址,之后把生成的镜像上传到  registry or docker hub
-REGISTRY_URL=182.61.59.218:5000
+REGISTRY_URL=127.0.0.1:5000
 #docker login --username tomsun28 --password xxxx
 
 #根据时间生成版本号
@@ -235,7 +235,7 @@ fi
 
 #用最新版本的镜像运行容器
 
-docker run -d -p 80:8080 --name $JOB_NAME -v /mnt/dockerWorkspace/tomcat/logs:/opt/tomcat/logs $TAG
+docker run -d -p 80:8080 --name $JOB_NAME -v /mnt/dockerWorkspace/tomcat/$JOB_NAME/logs:/opt/tomcat/logs $TAG
 
 ````
 
