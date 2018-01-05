@@ -182,7 +182,7 @@ RUN rm -rf /usr/local/tomcat/webapps
 ADD ./target/WebHelloWorld.war /usr/local/tomcat/webapps/WebHelloWorld.war
 
 #加入WAR包到tomcat下(2)自己的tomcat:1.1镜像的tomcat位置在/opt/tomcat
-RUN rm -rf /opt/tomcat/webapps
+RUN rm -rf /opt/tomcat/webapps/WebHelloWorld*
 ADD ./target/WebHelloWorld.war /opt/tomcat/webapps/WebHelloWorld.war
 
 
