@@ -133,8 +133,64 @@ CMD ["/opt/tomcat/bin/catalina.sh", "run"]
   <user name="admin" password="admin" roles="admin-gui,admin-script,manager-gui,manager-status,manager-script,manager-jmx"/>
 </tomcat-users>
 
+*******************************
+#build生成镜像
+
+docker build -t tomsun28/tomcat:1.1 
+
 
 ````
+
+**Dockerfile----基于jenkins基础镜像生成容器内jenkins用户运行docker的jenkins镜像**  
+
+````
+*******************Dockerfile*************
+
+FROM jenkins:latest
+MAINTAINER tomsun28 <usthe.com>
+#安装jenkins插件
+USER jenkins
+COPY plugins.txt /usr/share/jenkins/plugins.txt
+RUN /usr/local/bin/install-plugins.sh < /usr/share/jenkins/plugins.txt
+
+USER root
+ARG dockerGid=999
+
+#将jenkins用户放docker组,安装gosu
+RUN echo "docker:x:${dockerGid}:jenkins" >> /etc/group \
+    && apt-get update &&  apt-get install -y gosu \
+    && apt-get install -y libltdl7 \
+    && rm -rf /var/lib/apt/list/*
+
+
+COPY entrypoint.sh /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
+
+*****************plugins.txt*******************
+
+git:latest
+
+*****************entrypoint.sh******************
+
+
+#! /bin/bash
+set -e
+chown -R 1000 "$JENKINS_HOME"
+exec gosu jenkins /bin/tini -- /usr/local/bin/jenkins.sh
+
+
+*************build生成jenkins镜像******************
+将三个文件放入同一目录下执行：
+docker build -t tomsun28/jenkins:1.1 .
+
+````
+
+<br>
+
+详细代码更多镜像Dockerfile可见我的github [tomsun28's dockerfile](https://github.com/tomsun28/DockerFile)  
+
+<br>
+
 
 ### 使用Docker持续集成与自动化部署
 
@@ -143,28 +199,38 @@ CMD ["/opt/tomcat/bin/catalina.sh", "run"]
 ````
 #构建Docker私有仓库
 docker run -d --restart=always --name registry \
--v /mnt/dockerWorkspace/registry:/tmp/registry -p 5000:5000 registry
+-v /opt/dockerWorkspace/registry:/tmp/registry -p 5000:5000 tomsun28/registry:1.0
 #向仓库推送镜像
-docker push 182.61.59.000:5000/tomcat:1.0
+docker push 127.0.0.1:5000/tomcat:1.0
 #向仓库拉取镜像
-docker pull 182.61.59.000:5000/tomcat:1.0
+docker pull 127.0.0.1:5000/tomcat:1.0
 #server gave HTTP response to HTTPS client问题
 touch /etc/docker/daemon.json
-echo "{ "insecure-registries":["182.61.59.000:5000"] }" >> /etc/docker/daemon.json
+echo "{ "insecure-registries":["127.0.0.1:5000"] }" >> /etc/docker/daemon.json
 
 ````
 
 ````
-#构建Jenkins
+#构建Jenkins(1.6低版本jenkins)
 docker run -d -p 8080:8080 --name jenkins --restart=always \
--v /mnt/dockerWorkspace/jenkins_home:/var/jenkins_home \
--v /var/run/docker.sock:/var/run/docker.sock  tomsun28/jenkins
-#参数/mnt/dockerWorkspace/jenkins_home:/var/jenkins_home将目录映射到本地磁盘
+-v /opt/dockerWorkspace/jenkins_home:/var/jenkins_home \
+-v /var/run/docker.sock:/var/run/docker.sock  tomsun28/jenkins:1.0
+#参数/opt/dockerWorkspace/jenkins_home:/var/jenkins_home将目录映射到本地磁盘
 #参数/var/run/docker.sock:/var/run/docker.sock映射本地docker,这样就能在jenkins容器使用docker
 默认用户密码 admin/admin
 
+````
 
 ````
+#构建Jenkins(2.6新版本jenkins)
+docker run -d -p 8080:8080 -p 50000:50000 --name jenkins --restart=always \
+-v /opt/dockerWorkspace/jenkins_home:/var/jenkins_home \
+-v $(which docker):/usr/bin/docker \
+-v /var/run/docker.sock:/var/run/docker.sock  tomsun28/jenkins:1.1
+
+
+````
+
 
 **Dockerfile     tomcat项目所对应的tomcat镜像构建Dockerfile,将此Dockerfile放在当前项目下,示例项目名为WebHelloWorld**  
 
@@ -218,8 +284,8 @@ REGISTRY_URL=127.0.0.1:5000
 TAG=$REGISTRY_URL/$JOB_NAME:`date +%y%m%d-%H-%M`
 
 #使用maven 镜像进行编译 打包出 war 文件
-docker run --rm --name mvn -v /mnt/dockerWorkspace/maven:/root/.m2 \
--v /mnt/dockerWorkspace/jenkins_home/workspace/$JOB_NAME:/usr/src/mvn -w /usr/src/mvn/ \
+docker run --rm --name mvn -v /opt/dockerWorkspace/maven:/root/.m2 \
+-v /opt/dockerWorkspace/jenkins_home/workspace/$JOB_NAME:/usr/src/mvn -w /usr/src/mvn/ \
 tomsun28/maven:1.0 mvn clean install -Dmaven.test.skip=true
 
 #使用放在项目下面的Dockerfile打包生成镜像
@@ -235,7 +301,7 @@ fi
 
 #用最新版本的镜像运行容器
 
-docker run -d -p 80:8080 --name $JOB_NAME -v /mnt/dockerWorkspace/tomcat/$JOB_NAME/logs:/opt/tomcat/logs $TAG
+docker run -d -p 80:8080 --name $JOB_NAME -v /opt/dockerWorkspace/tomcat/$JOB_NAME/logs:/opt/tomcat/logs $TAG
 
 ````
 
@@ -260,6 +326,10 @@ hahaha为上面Jenkins设置的身份令牌
 <br>
 <br>
 
-*参考来自*[使用Docker构建持续集成与自动部署的Docker集群](http://blog.csdn.net/java_dyq/article/details/51997024)  
+*参考来自*
+[使用Docker构建持续集成与自动部署的Docker集群](https://my.oschina.net/jayqqaa12/blog/633683?p=1&temp=1516212821799#blog-comments-list)  
+[Running Docker in Jenkins (in Docker)](http://container-solutions.com/running-docker-in-jenkins-in-docker/)  
+<br>
+<br>
 *转载请注明* [from tomsun28](http://usthe.com)  
 
