@@ -231,6 +231,10 @@ docker run -d -p 8080:8080 -p 50000:50000 --name jenkins --restart=always \
 
 ````
 
+````
+小插曲：baidu云过期了转便宜的jd云,在jd云下运行的jenkins容器提交表单服务器无响应,其他跳转是好的,各种排查了一天哎,最后实在没办法提交issue给jd马上回了是docker的MTU和它们云服务器MTU不一样会导致有时docker网络不通。。。。。。。。只想说日狗d了
+````
+
 
 **Dockerfile     tomcat项目所对应的tomcat镜像构建Dockerfile,将此Dockerfile放在当前项目下,示例项目名为WebHelloWorld**  
 
