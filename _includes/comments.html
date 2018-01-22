@@ -23,7 +23,24 @@
         })();
     </script>
     <noscript>要查看<a href="http://disqus.com/?ref_noscript"> Disqus </a>评论，请启用 JavaScript</noscript>
-    
+  {% elsif site.comment.gitment %}
+    <div id="gitmentContainer"></div>
+    <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+    <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+    <script>
+    var gitment = new Gitment({
+       owner: 'tomsun28',
+       repo: 'https://github.com/tomsun28/tomsun28.github.io.git',
+       oauth: {
+           client_id: '354d0024d2b45dfc9b11',
+           client_secret: '24737f00915b4c74f09bd737be36ab09e3a61d6e',
+       },
+    });
+    gitment.render('gitmentContainer');
+    </script>
+
+
+   
   {% endif %}
 
 </section>
