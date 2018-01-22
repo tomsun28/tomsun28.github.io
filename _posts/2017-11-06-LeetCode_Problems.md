@@ -10,7 +10,7 @@ tag: algorithm
 <br>
 ### 1. two sum  
 
-![](D:\github\tomsun28.github.io\images\posts\leetcode\image1.PNG)  
+![](/images/posts/leetcode/image1.PNG)  
 ```
 class Solution {
     public int[] twoSum(int[] nums, int target) {
@@ -33,7 +33,7 @@ class Solution {
 
 ### 2. add two numbers  
 
-![](D:\github\tomsun28.github.io\images\posts\leetcode\image2.PNG)  
+![](/images/posts/leetcode/image2.PNG)  
 ```
 /**
  * Definition for singly-linked list.
@@ -75,7 +75,7 @@ class Solution {
 
 ### 3. longest substring without repeating characters  
 
-![](D:\github\tomsun28.github.io\images\posts\leetcode\image3.PNG)  
+![](/images/posts/leetcode/image3.PNG)  
 ```
 class Solution {
     public int lengthOfLongestSubstring(String s) {
@@ -101,7 +101,7 @@ class Solution {
 
 ### 4. median of two sorted arrays  
 
-![](D:\github\tomsun28.github.io\images\posts\leetcode\image4.PNG)  
+![](/images/posts/leetcode/image4.PNG)  
 ```
 class Solution {
     public double findMedianSortedArrays(int[] nums1, int[] nums2) {
@@ -165,7 +165,7 @@ class Solution {
 
 ### 5. longest palindromic substring  
 
-![](D:\github\tomsun28.github.io\images\posts\leetcode\image5.PNG)  
+![](/images/posts/leetcode/image5.PNG)  
 ```
 class Solution {
     public String longestPalindrome(String s) {
@@ -201,7 +201,7 @@ class Solution {
 
 ### 6. zigZag conversion  
 
-![](D:\github\tomsun28.github.io\images\posts\leetcode\image6.PNG)  
+![](/images/posts/leetcode/image6.PNG)  
 ```
 
 
@@ -211,7 +211,7 @@ class Solution {
 
 ### 7. reverse integer  
 
-![](D:\github\tomsun28.github.io\images\posts\leetcode\image7.PNG)  
+![](/images/posts/leetcode/image7.PNG)  
 ```
 
 
@@ -221,7 +221,7 @@ class Solution {
 
 ### 8. string to integer(atoi)  
 
-![](D:\github\tomsun28.github.io\images\posts\leetcode\image8.PNG)  
+![](/images/posts/leetcode/image8.PNG)  
 ```
 
 
@@ -231,7 +231,7 @@ class Solution {
 
 ### 9. palindrome number  
 
-![](D:\github\tomsun28.github.io\images\posts\leetcode\image9.PNG)  
+![](/images/posts/leetcode/image9.PNG)  
 ```
 
 
@@ -241,7 +241,7 @@ class Solution {
 
 ### 10. regular expression matching  
 
-![](D:\github\tomsun28.github.io\images\posts\leetcode\image10.PNG)  
+![](/images/posts/leetcode/image10.PNG)  
 ```
 
 
@@ -251,7 +251,7 @@ class Solution {
 
 ### 11. container with most water  
 
-![](D:\github\tomsun28.github.io\images\posts\leetcode\image11.PNG)  
+![](/images/posts/leetcode/image11.PNG)  
 ```
 
 
@@ -261,7 +261,7 @@ class Solution {
 
 ### 12. integer to roman  
 
-![](D:\github\tomsun28.github.io\images\posts\leetcode\image12.PNG)  
+![](/images/posts/leetcode/image12.PNG)  
 ```
 
 
@@ -271,7 +271,7 @@ class Solution {
 
 ### 13. roman to integer  
 
-![](D:\github\tomsun28.github.io\images\posts\leetcode\image13.PNG)  
+![](/images/posts/leetcode/image13.PNG)  
 ```
 
 
@@ -281,7 +281,7 @@ class Solution {
 
 ### 14. longest common prefix  
 
-![](D:\github\tomsun28.github.io\images\posts\leetcode\image14.PNG)  
+![](/images/posts/leetcode/image14.PNG)  
 ```
 
 
@@ -291,7 +291,7 @@ class Solution {
 
 ### 15. 3sum  
 
-![](D:\github\tomsun28.github.io\images\posts\leetcode\image15.PNG)  
+![](/images/posts/leetcode/image15.PNG)  
 ```
 
 
@@ -301,7 +301,7 @@ class Solution {
 
 ### 16. 3sum closest  
 
-![](D:\github\tomsun28.github.io\images\posts\leetcode\image16.PNG)  
+![](/images/posts/leetcode/image16.PNG)  
 ```
 
 
@@ -311,7 +311,7 @@ class Solution {
 
 ### 17.two sum  
 
-![](D:\github\tomsun28.github.io\images\posts\leetcode\image1.PNG)  
+![](/images/posts/leetcode/image17.PNG)  
 ```
 
 
