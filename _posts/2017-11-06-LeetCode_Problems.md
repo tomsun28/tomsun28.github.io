@@ -203,7 +203,57 @@ class Solution {
 
 ![](/images/posts/leetcode/image6.PNG)  
 ```
-
+class Solution {
+    public String convert(String s, int numRows) {
+        if(numRows<=1)
+        {
+            return s;
+        }
+        
+        StringBuffer[] buffer = new StringBuffer[numRows];
+        for(int m=0;m<buffer.length;m++)
+            buffer[m]=new StringBuffer();
+        int index = 0;
+        int flag = 0;
+        int change = 0;
+        for(int i = 0;i<s.length();i++)
+        {
+            buffer[index].append(s.charAt(i));
+            if(flag==0)
+            {
+                if(index==numRows-1)
+                {
+                    flag=1;
+                    change=-1;
+                }
+                else
+                {
+                    change=1;
+                }
+            }
+            if(flag==1)
+            {
+                if(index==0)
+                {
+                    flag=0;
+                    change=1;
+                }
+                else
+                {
+                    change=-1;
+                }
+                
+            }
+                index+=change;   
+        }
+        StringBuffer combine = new StringBuffer();
+        for(StringBuffer temp:buffer)
+        {
+            combine.append(temp.toString());
+        }
+        return combine.toString();
+    }
+}
 
 
 ```
@@ -213,7 +263,24 @@ class Solution {
 
 ![](/images/posts/leetcode/image7.PNG)  
 ```
-
+class Solution {
+    
+    private static int sum;
+    public int reverse(int x) {
+        int result=0,newresult=0;
+        int tail=0;
+        while(x!=0)
+        {
+            tail = x%10;
+            newresult = result*10+tail;
+            if((newresult-tail)/10!=result)
+                return 0;
+            result = newresult;
+            x=x/10;
+        }
+        return result;
+    }
+}
 
 
 ```
@@ -223,7 +290,40 @@ class Solution {
 
 ![](/images/posts/leetcode/image8.PNG)  
 ```
-
+class Solution {
+    public int myAtoi(String str) {
+        int index=0,sign=1,total=0;
+        //1
+        if(str.length()==0)
+            return 0;
+        
+        //2
+        while(str.charAt(index)==' '&&index<str.length())
+            index++;
+        
+        //3
+        if(str.charAt(index)=='+'||str.charAt(index)=='-')   
+        {
+            sign = str.charAt(index)== '+' ? 1 : -1;
+            index++;
+        }
+        //4
+        while(index<str.length())
+        {
+            int digit = str.charAt(index) - '0';
+            if(digit<0||digit>9)
+                break;
+            if(Integer.MAX_VALUE/10<total||Integer.MAX_VALUE/10==total&&Integer.MAX_VALUE%10<digit)
+               {
+                   return sign == 1 ? Integer.MAX_VALUE : Integer.MIN_VALUE;
+               } 
+            total = total*10 + digit;
+            index++;
+        
+        }
+        return total*sign;
+}
+}
 
 
 ```
@@ -233,7 +333,20 @@ class Solution {
 
 ![](/images/posts/leetcode/image9.PNG)  
 ```
-
+class Solution {
+    public boolean isPalindrome(int x) {
+        int sum = 0;
+        int x_temp = x;
+        int digit = 0;
+        while(x > 0)
+        {
+            digit = x%10;
+            sum = sum*10 + digit;
+            x = x/10;
+        }
+        return sum==x_temp ? true:false;
+    }
+}
 
 
 ```
