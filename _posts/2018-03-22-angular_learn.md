@@ -41,4 +41,19 @@ ng generate pip my-pip
 ng generate service my-service
 
 ````
+<br>
+
+## TypeScript  
+
+````
+Angular2中使用的Typescript书写规范非常严格,默认启用no-trailing-whitespace,不遵守就会报错影响了写代码的效率,可在tslint.json中配置取消。
+
+"no-trailing-whitespace": false #代码尾部空格检测,若为true则不允许每行代码后有空格,包括换行后产生空格
+"on-line":["check-whitespace"]  #要求函数名等与大括号之间有空格,不取消比较好
+"comment-foemat":["check-space"] #要求注释行的开头必须加一个空格
+"whitespace":["check-sparator","...."]  #whitespace决定哪些必须要空格,check-separator表示初始化数组时相邻元素用","分割并之后加入空格
+
+其他规范可见tslint.json设置成自己喜欢的风格
+
+````
 
