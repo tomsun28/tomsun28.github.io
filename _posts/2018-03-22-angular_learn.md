@@ -44,6 +44,16 @@ ng generate service my-service
 ````
 <br>
 
+## typescript使用cryptoJs  
+
+````
+npm install crypto-js
+npm install @types/crypto-js --save-dev
+之后在angualr里导入
+import * as CryptoJS from 'crypto-js';
+
+````
+
 ## 特性模块  
 
 ````
