@@ -64,7 +64,7 @@ ng generate module my-module --routing #创建一个带路由的特性模块
 ng generate component my-module/my-component #向特性模块中添加组件
 
 #在顶层根路由配置路由指向对应的特性模块
-const routers: Routers = [{path: 'hello', loadChildren:app/my-module/my-module.module#MyModule}]
+const routers: Routes = [{path: 'hello', loadChildren:app/my-module/my-module.module#MyModule}]
 @Ngmodule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
