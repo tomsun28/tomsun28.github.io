@@ -74,7 +74,7 @@ tag: oracle
 	using (select userid,id from test2 where id >= 20) tw
 	on (t1.userid = tw.userid)
 	when matched then update set t1.id = tw.id
-	when mot matched then insert values(tw.userid,tw.id);
+	when mot matched then insert(t1.userid,t1.id) values(tw.userid,tw.id);
 
 **CURSOR**
 
