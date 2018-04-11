@@ -42,7 +42,7 @@ tag: oracle
 	字符串截取
 	substr('my name is tomsun28',0,5)返回'my na' 从左端第一个字符开始截取长度为5的字符串 
 	substr('my name is tomsun28',1,5)返回'my na' 0和1都表示从第一个字符开始截取
-	substr('my name is tomsun28',-1,5)返回'sun28' 表示从右端第一个字符开始截取5个字符
+	substr('my name is tomsun28',-5,5)返回'sun28' 表示从右端第5个字符开始向后截取5个字符
 
 **`||`**
 
