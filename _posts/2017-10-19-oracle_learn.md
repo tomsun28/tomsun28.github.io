@@ -18,6 +18,12 @@ tag: oracle
 	decode(条件,值1,返回值1,值2,返回值2,....,值n,返回值n,缺省值)
 	decode(table.id,'10',table.value/10,'100',table.value/100,0)
 
+**into**  
+	v_number integer;
+	select count(*) into v_number from table;
+
+
+
 **case when**
 
 	case flag
