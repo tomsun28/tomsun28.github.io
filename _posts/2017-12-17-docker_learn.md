@@ -208,6 +208,8 @@ docker pull 127.0.0.1:5000/tomcat:1.0
 touch /etc/docker/daemon.json
 echo "{ "insecure-registries":["127.0.0.1:5000"] }" >> /etc/docker/daemon.json
 
+# 当仓库容量太大需要清空时,参照  
+# https://github.com/burnettk/delete-docker-registry-image
 ````
 
 ````
