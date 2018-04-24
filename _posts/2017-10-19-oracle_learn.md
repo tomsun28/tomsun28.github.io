@@ -203,6 +203,22 @@ tag: oracle
 	end procedure_name;
 
 
+**oracle issue:ora-06508 无法找到正在调用的程序单元**  
+
+````
+相邻调用的存储在对公共表等资源删除重建时：
+存储调用方式：
+if v_proname = 'proc_haha' then
+  proc_haha(v_batch, v_success);
+end if;
+替换为sql执行：
+if v_proname = 'proc_haha' then
+  v_sql := 'begin proc_haha(:v1,:v2);end;';
+  execute immediate v_sql using v_batch, in out v_success;
+end if;
+
+````
+
 <br>
 <br>
 <br>
