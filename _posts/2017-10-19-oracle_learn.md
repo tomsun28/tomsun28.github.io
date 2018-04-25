@@ -151,11 +151,13 @@ tag: oracle
 
 **启动关闭oracle数据库实例**
 
+    关闭前关闭监听，启动后启动监听
+
 	sqlplus /nolog
 	conn / as sysdba
 	conn username
 	startup  这里环境变量export要设置正确的数据库SID，就是启动环境变量ORACLE_SID所对应的那个数据库实例
-	startdown
+	shutdown immediate
 
 **oracle用户解锁**
 
