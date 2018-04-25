@@ -151,7 +151,7 @@ tag: oracle
 
 **启动关闭oracle数据库实例**
 
-    关闭前关闭监听，启动后启动监听
+    关闭后关闭监听，启动前启动监听
 
 	sqlplus /nolog
 	conn / as sysdba
