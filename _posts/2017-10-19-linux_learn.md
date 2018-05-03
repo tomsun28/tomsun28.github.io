@@ -125,7 +125,7 @@ val=`expr 3 + 3`
 val2=`expr $1 + $2`
 echo "$val2  $val"
 
-if[$val == $val2]
+if [ $val == $val2 ]
 then
     echo "val等于val2";
 else

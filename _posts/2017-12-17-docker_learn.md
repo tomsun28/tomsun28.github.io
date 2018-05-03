@@ -34,6 +34,8 @@ docker images 查看镜像
 docker ps -a  查看所有容器状态
 docker rm 删除容器
 docker rmi 删除镜像
+docker rmi $(docker images|grep usthe|awk '{print $3}') 批量删除镜像usthe
+docker rm $(docker ps -a -q)批量删除已经停止的容器  
 
 systemctl restart docker 重启docker
 
