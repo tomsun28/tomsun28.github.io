@@ -107,6 +107,44 @@ tag: oracle
 	            do something;
 	    end loop;
 	close c_user;
+	
+	cursor综合实例:
+	if substr(v_date,-2,2) = '02' then 
+	  begin
+	  
+	    merge into tableA a
+	    using tableB b
+	    on (a.id = b.aid)
+	    when matched then
+	      update set a.money = a.money + b.money;
+	    when not matched then
+	      insert (a.id, a.money)
+	      values (b.aid, b.money);
+	    commit;
+	    
+	    declare
+	      cursor cur_update is select * 
+	      from tableA 
+	      for update of id, money;
+	      oneInfo cur_update%rowtype;
+	      idInfo      tableA.id%type;
+	      moneyInfo   tableA%type;
+	      
+	        begin
+	          for oneInfo in cur_update loop
+	            .......
+	            .......
+	            
+	            update tableA 
+	              set id = idInfo,
+	                  money = moneyInfo
+	            where current of cur_update;
+	          end loop;
+	        end;
+	   end;
+	 end if;
+
+
 
 **in/exists与not in/not exists**
 
