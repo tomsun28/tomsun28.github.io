@@ -324,7 +324,7 @@ WebHelloWorld为Jenkins的项目名
 hahaha为上面Jenkins设置的身份令牌
 
 ````
-
+**分享一波阿里云代金券[快速上云](https://promotion.aliyun.com/ntms/act/ambassador/sharetouser.html?userCode=rjlzz3uf&utm_source=rjlzz3uf)**
 
 
 <br>
