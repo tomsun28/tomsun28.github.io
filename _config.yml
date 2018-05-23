@@ -57,7 +57,7 @@ nav:
 
 # Pagination
 gems: [jekyll-paginate,jekyll-sitemap]
-paginate: 10
+paginate: 6
 paginate_path: "page/:num/"
 
 #markdown解析
