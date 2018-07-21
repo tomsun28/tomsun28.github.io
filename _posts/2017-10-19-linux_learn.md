@@ -39,10 +39,14 @@ tag: linux
 <br>
 
 **用户,组**
-
-	groupadd -g 502 groupname
-	useradd  -u 502 -g groupname username
-	usermod -a -G groupname username 将一个已有用户添加到一个已有用户组，使得该用户组成为该用户的附加组 -a 代表append 
+        
+        adduser username   ubuntu下新增一个用户
+        passwd  username   给username修改密码
+        
+	groupadd -g 502 groupname    添加一个用户组，组id为502
+	useradd  -u 502 -g groupname username    新增一个用户username，将其添加到用户组groupname
+	usermod -a -G groupname username 将一个已有用户添加到一个已有用户组，使得该用户组成为该用户的附加组 -a 代表append
+        eg: usermod -a -G root username  将username添加到root组，使其有root权限 
 	usermod -g username groupname 将username的主要用户组改为groupname
 	gpasswd -d username groupname 将一个用户从某个组中删除，需要保证group不是用户的主组
 
