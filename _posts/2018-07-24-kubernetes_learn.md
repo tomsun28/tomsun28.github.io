@@ -18,6 +18,90 @@ tag: 分布式
 - kubelet 负责维护容器的生命周期，相当于在node上的agent，负责管理pods和它们上面的容器，images镜像、volumes等  
 - kube-proxy 负责为service提供集群内部的服务发现和负载均衡  
 
+2. kubernetes 常用命令  
+
+- 查看集群信息  
+```
+kubectl cluster-info
+```
+
+- 在集群中运行一个应用程序  
+```
+kubectl run nginx-test  --replicas=3 --labels='app=nginx' --image=nginx:latest --port=80  
+#使用kubectl run命令启动一个pod，自定义名称为nginx-test，启动了3个pod副本，并给pod打上标签app=nginx，这个pod拉取docker镜像nginx:latest，开放端口80
+```
+
+- 查看集群中所有pod  
+```
+kubectl get po
+kubectl get pod
+kubectl get pods
+```
+
+- 根据标签label查看集群中pod  
+```
+kubectl get pods -l app
+kubectl get pods -l app=nginx
+```
+
+- 查看标签为app=nginx的pod在集群中具体分配在哪个节点和pod的ip  
+```
+kubectl get pods -l app=nginx -o wide
+```
+
+- 查看pod的详细信息  
+```
+kubectl describe pods <podname>
+```
+
+- 查看集群中的deployment(其他命令与pod类似)  
+```
+kubectl get deploy
+```
+
+- 查看集群中的replica set(其他命令与pod类似)  
+```
+kubectl get replicaset
+kubectl get rs
+```
+
+- 创建一个service，集群中的资源通过service与外界交互  
+```
+kubectl expose deploy nginx-test --port=8080 --target-port=80 --name=nginx-service
+#k8s集群通过deploy来管理，导出名为nginx-test的deploy，为其创建名为nginx-service的服务开放给外界，使外界能通过nginx-service来和nginx-test交互，外部端口为8080,内部端口为80
+```
+
+- 查看集群中的服务(其他命令与pod类似)  
+```
+kubectl get src
+```
+
+- 查看pod中容器的日志  
+```
+kubectl log <podname>    #查看指定pod内容器的日志  
+kubectl log -l app=nginx #查看标签lable为app=nginx下的pod的容器日志
+```
+
+- pod的副本的扩容和缩容  
+```
+kubectl scale deploy nginx-test --replicas10
+#通过kubectl scale将名为nginx-test的deploy重新定义有10个副本pod
+```
+
+- 查看pod副本扩容缩容的实时进度  
+```
+kubectl rollout status deploy nginx-test
+```
+
+- 删除资源  
+**pod和rs不能直接被删除,其被deploy控制,即使删除了某一pod,也会创建新的pod来对应配置pod副本数量,要想删除pod,只能用删除其deploy来删除,或者变更pod副本配置缩容(如上)**
+
+```
+kubectl delete deploy nginx-test  #删除部署的deploy(删除其对于的pod和rs)
+kubectl delete svc nginx-service  #删除创建的service
+```
+
+
 
 
 
@@ -86,8 +170,8 @@ sysctl net.bridge.bridge-nf-call-iptables=1
 ```
 
 - 选择 flannel 作为 pod network  
-``` kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/c5d10c8/Documentation/kube-flannel.yml
-
+``` 
+kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/c5d10c8/Documentation/kube-flannel.yml
 ```
 
 - 要使 flannel 能正常使用,需要在master初始化时 kubeadm init 添加对应pod-network-cidr  
@@ -108,7 +192,7 @@ sysctl net.bridge.bridge-nf-call-iptables=1
 
 ``` kubectl get nodes ```
 
-7. 对kubeadm所做的搭建进行undo  
+7. 对kubeadm所做的搭建进行undo  revert   
 
 ``` kubeadm reset ```  
 
