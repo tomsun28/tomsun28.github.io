@@ -53,13 +53,13 @@ tag: 分布式
 
 ```
 k8s=v1.11.1所对应镜像及版本:
-k8s.gcr.io_coredns:1.1.3
-k8s.gcr.io_etcd-amd64:3.2.18
-k8s.gcr.io_kube-apiserver-amd64:v1.11.1
-k8s.gcr.io_kube-controller-manager-amd64:v1.11.1
-k8s.gcr.io_kube-proxy-amd64:v1.11.1
-k8s.gcr.io_kube-scheduler-amd64:v1.11.1
-k8s.gcr.io_pause:3.1
+k8s.gcr.io/coredns:1.1.3
+k8s.gcr.io/etcd-amd64:3.2.18
+k8s.gcr.io/kube-apiserver-amd64:v1.11.1
+k8s.gcr.io/kube-controller-manager-amd64:v1.11.1
+k8s.gcr.io/kube-proxy-amd64:v1.11.1
+k8s.gcr.io/kube-scheduler-amd64:v1.11.1
+k8s.gcr.io/pause:3.1
 ```
 
 - 初始化master  
@@ -68,25 +68,34 @@ k8s.gcr.io_pause:3.1
 - 成功之后会有join集群的脚步提示，记一下  
 ``` kubeadm join 192.168.0.3:6443 --token q6gmgt.3dakenwttapw4n2o --discovery-token-ca-cert-hash sha256:dbf69119e962456c239c5f7821ee9a0db46fb643fc40da8776d4e032de072085 ```  
 
-- 根据output提示，可以配置非root用户也能run kubectl的命令行  
+- 根据output提示，to start using your cluster, you need to run(no root user )  
 ````
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 ````
-或者：  
+或者(root user)：  
 ``` export KUBECONFIG=/etc/kubernetes/admin.conf ```  
+
+
+4. 安装 pod network 提供 pods 节点之前相互通信  
+
+- 运行下面命令设置 ````/proc/sys/net/bridge/bridge-nf-call-iptables````为1  
+```
+sysctl net.bridge.bridge-nf-call-iptables=1
+```
+
+- 选择 flannel 作为 pod network  
+``` kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/c5d10c8/Documentation/kube-flannel.yml
+
+```
+
+- 要使 flannel 能正常使用,需要在master初始化时 kubeadm init 添加对应pod-network-cidr  
+``` kubeadm init --pod-network-cidr=10.244.0.0/16 ```  
 
 - 解除master不能调度运行其他pod的限制  
 ``` kubectl taint nodes --all node-role.kubernetes.io/master- ```  
 
-4. 安装 pod network 提供 pods 节点之前相互通信  
-
-- 选择 flannel 作为 pod network  
-``` kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/v0.10.0/Documentation/kube-flannel.yml ```  
-
-- 要使 flannel 能正常使用,需要在master初始化时 kubeadm init 添加对应pod-network-cidr  
-``` kubeadm init --pod-network-cidr=10.244.0.0/16 ```  
 
 5. server2上部署kebernetes并作为节点join to master  
 
@@ -99,6 +108,10 @@ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 ``` kubectl get nodes ```
 
+7. 对kubeadm所做的搭建进行undo  
+
+``` kubeadm reset ```  
+
 
 
 
@@ -107,7 +120,7 @@ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 <br>
 
 *参考来自*
-[kubernetes官方部署文档](https://my.oschina.net/jayqqaa12/blog/633683?p=1&temp=1516212821799#blog-comments-list)  
+[kubernetes官方部署文档](https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/)  
 <br>
 <br>
 *转载请注明* [from tomsun28](http://usthe.com)  
