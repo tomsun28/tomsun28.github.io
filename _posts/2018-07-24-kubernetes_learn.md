@@ -9,7 +9,7 @@ tag: 分布式
 
 #### kubernetes 知识点  
 
-1. 核心组件  
+**1. 核心组件**  
 
 - etcd 保存整个集群的状态信息，感觉相当于k8s的数据库  
 - apiserver 提供对k8s资源操作的唯一入口，并提供认证授权，访问控制，API注册与发现等机制  
@@ -18,7 +18,7 @@ tag: 分布式
 - kubelet 负责维护容器的生命周期，相当于在node上的agent，负责管理pods和它们上面的容器，images镜像、volumes等  
 - kube-proxy 负责为service提供集群内部的服务发现和负载均衡  
 
-2. kubernetes 常用命令  
+**2. kubernetes 常用命令**  
 
 - 查看集群信息  
 ```
@@ -73,7 +73,7 @@ kubectl expose deploy nginx-test --port=8080 --target-port=80 --name=nginx-servi
 
 - 查看集群中的服务(其他命令与pod类似)  
 ```
-kubectl get src
+kubectl get svc
 ```
 
 - 查看pod中容器的日志  
@@ -99,8 +99,31 @@ kubectl rollout status deploy nginx-test
 ```
 kubectl delete deploy nginx-test  #删除部署的deploy(删除其对于的pod和rs)
 kubectl delete svc nginx-service  #删除创建的service
+
 ```
 
+
+**3. 应用创建部署yaml文件**  
+
+**tomsun28之后的k8s应用部署修改，都确定使用apply形式部署更新，使用git版本控制创建资源，好处多多**  
+
+```
+kubectl apply -f nginx.yaml    ##更新式创建资源，如果不存在此资源则创建，如存在改动则调整资源(推荐)
+kubectl delete -f nginx.yaml   #资源(pod,deployment,service,replicaset...)删除销毁
+```
+
+- kubernetes部署nginx集群  
+
+```nginx.yaml :```
+
+```
+
+
+
+
+
+
+```
 
 
 
