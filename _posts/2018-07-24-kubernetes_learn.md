@@ -117,13 +117,54 @@ kubectl delete -f nginx.yaml   #资源(pod,deployment,service,replicaset...)删�
 ```nginx.yaml :```
 
 ```
+# ----------------------nginx--------------------- #
 
+# ------nginx deployment------ #
+kind: Deployment
+apiVersion: apps/v1beta2
+metadata:
+ name: nginx-deployment
+ labels: 
+  app: nginx
+spec:
+ replicas: 3
+ selector:
+  matchLabels:
+   app: nginx
+ template:
+  metadata:
+   labels:
+    app: nginx
+  spec:
+   containers:
+   - name: nginx
+     image: 192.167.2.144:5000/nginx:latest
+     ports:
+     - containerPort: 80
 
+---
 
-
-
+# -------nginx-service--------- #
+apiVersion: v1
+kind: Service
+metadata:
+ name: nginx-service
+spec:
+ type: NodePort
+ ports:
+ - port: 80
+   targetPort: 80
+   nodePort: 30001
+ selector:
+  app: nginx
 
 ```
+
+```kubectl apply -f nginx.yaml```
+
+
+
+
 
 
 
