@@ -38,17 +38,17 @@ tag: linux
 
 <br>
 
-**用户,组**
-        
-        adduser username   ubuntu下新增一个用户
-        passwd  username   给username修改密码
-        
-	groupadd -g 502 groupname    添加一个用户组，组id为502
-	useradd  -u 502 -g groupname username    新增一个用户username，将其添加到用户组groupname
-	usermod -a -G groupname username 将一个已有用户添加到一个已有用户组，使得该用户组成为该用户的附加组 -a 代表append
+**用户,组**  
+
+    adduser username   ubuntu下新增一个用户  
+    passwd  username   给username修改密码  
+    
+    groupadd -g 502 groupname    添加一个用户组，组id为502
+    useradd  -u 502 -g groupname username    新增一个用户username，将其添加到用户组groupname
+    usermod -a -G groupname username 将一个已有用户添加到一个已有用户组，使得该用户组成为该用户的附加组 -a 代表append
         eg: usermod -a -G root username  将username添加到root组，使其有root权限 
-	usermod -g username groupname 将username的主要用户组改为groupname
-	gpasswd -d username groupname 将一个用户从某个组中删除，需要保证group不是用户的主组
+    usermod -g username groupname 将username的主要用户组改为groupname
+    gpasswd -d username groupname 将一个用户从某个组中删除，需要保证group不是用户的主组
 
 
 <br>
@@ -77,11 +77,92 @@ tag: linux
 
 <br>
 
-**重启**
+**主机相关操作**
 
-	reboot,shutdown -r now
+	reboot,shutdown -r now 立刻重启  
+	shutdown -h now 立刻关机  
+	shutdown -h 20:25 20:25关机  
+	/etc/sysconfig/network 配置主机名hostname(redhat使用过)  
+
 
 <br>
+
+**网络IP等配置**  
+
+---
+
+```
+/etc/sysconfig/network-scripts/ifcfg-eth*       (redhat,centos系列)对其修改配置ip  
+一个网卡对应一个ifcfg-eth*文件  
+```
+
+```
+DEVICE=eth0                         #网卡名      
+HWADDR=00:0C:29:99:ED:C1            #mac地址  
+TYPE=Ethernet                       #网卡类型  
+UUID=ecb1517d-d450-4409-8289-1deed3224b96       #uuid  
+ONBOOT=yes                          #开机上电自启动网络连接(yes/no)  
+NM_CONTROLLED=yes  
+BOOTPROTO=static                    #启用静态IP地址  若是dhcp则是动态获取ip后面就不需要填  
+IPADDR=192.167.2.146                #ip地址  
+NETMASK=255.255.255.0               #子网掩码  
+GATEWAY=192.167.2.1                 #网关  
+```
+```service network restart  #重启网卡```  
+
+---
+
+```
+/etc/network/interfaces                         (ubuntu)对其修改配置ip  
+所有网卡对应一个interfaces文件  
+```
+
+```
+auto ens192                       #要设置的网卡  
+iface ens192 inet static          #设置静态IP；如果是使用自动IP用dhcp，后面的不用设置，一般少用  
+address 192.167.2.144             #IP地址  
+gateway 192.167.2.1               #子网掩码  
+netmask 255.255.255.0             #网关  
+dns-nameservers 192.162.76.9 27.26.90.3  #dns
+```
+```/etc/init.d/networking restart   #重启网卡```  
+
+以上如果ifconfig还是找不到配置的网卡，重启虚拟机  
+
+---
+
+**配置各主机之间ssh节点互信(ssh直接连接不输入密码)**  
+
+提前各节点添加对应hosts  
+
+各个节点执行:  
+
+```
+mkdir ~/.ssh
+chmod 755 .ssh 
+/usr/bin/ssh-keygen -t rsa
+/usr/bin/ssh-keygen -t dsa
+```
+将所有的key文件汇总到一个总的认证文件中，在节点1上执行:  
+```
+ssh node1 cat ~/.ssh/id_rsa.pub >> authorized_keys
+ssh node2 cat ~/.ssh/id_rsa.pub >> authorized_keys
+ssh node1 cat ~/.ssh/id_dsa.pub >> authorized_keys
+ssh node2 cat ~/.ssh/id_dsa.pub >> authorized_keys
+```
+节点1上存在一份完整的key，拷贝到节点2:  
+```
+[root@node1 ~] cd ~/.ssh/
+[root@node1 .ssh] scp authorized_keys node2:~/.ssh/
+[root@node2 .ssh] chmod 600 authorized_keys
+```
+各个节点执行:  
+```
+ssh node1 date
+ssh node2 date
+```
+检验是否配置成功，在节点1上不用输入密码就可以通过ssh连接节点2，说明配置成功  
+
 
 **查看端口占用情况**
 
