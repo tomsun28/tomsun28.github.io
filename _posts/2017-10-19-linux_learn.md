@@ -317,6 +317,9 @@ cat /etc/passwd | awk -F ":" 'print $1'  #显示输出用":"分隔符将passwd�
 sed [options] 'command' files
 sed -n '1p' temp.log                          #打印temp.log的第一行
 awk -F ":" 'print $2' temp.log | sed -n '1p'  #打印输出temp.log的第二列第一行的内容
+sed -i "s/dddd/mmmm/g" /home/test.txt  #将test.txt中所有dddd替换成mmmm
+sed -i "s/dddd/mmmm/" /hone/test.txt   #将test.txt的第一个dddd替换成mmmm
+
 
 ````
 
