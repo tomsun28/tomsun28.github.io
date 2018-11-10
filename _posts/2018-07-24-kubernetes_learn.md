@@ -193,7 +193,11 @@ spec:
 ````
 - 更新并安装kubelet kubeadm kubectl  
 ``` # apt-get update && apt-get install -y kubelet kubeadm kubectl ```  
-``` 指定版本为: # apt-get update && apt-get install -y kubelet=11 kubeadm=11 kubectl=11 ```  
+``` 指定版本为: ```  
+``` # apt-get update && apt-get install -y kubelet=11 kubeadm=11 kubectl=11 ```    
+
+- 关闭swap  
+``` sudo swapoff -a ```
 
 3. master server1上初始化部署kubernetes的master  
 
