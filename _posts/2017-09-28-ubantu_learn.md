@@ -7,6 +7,18 @@ tag: linux
 
 ## about ubantu
 
+**snap包管理器: **  
+
+snap是一种全新的软件包管理方式，它类似一个容器拥有一个应用程序所有的文件和库，各个应用程序之间完全独立。所以使用snap包的好处就是它解决了应用程序之间的依赖问题，使应用程序之间更容易管理。但是由此带来的问题就是它占用更多的磁盘空间  
+
+- sudo snap list 列出已经安装的snap包  
+- sudo snap find testName 搜索要安装的snap包  
+- sudo snap install testName 安装一个snap包  
+- sudo snap refresh testName 更新一个snap包，如果你后面不加包的名字的话那就是更新所有的snap包  
+- sudo snap revert testName 把一个包还原到以前安装的版本  
+- sudo snap remove testName 删除一个snap包  
+  ​          
+  ​          
 
 **dpkg命令用法：**
 
