@@ -194,7 +194,7 @@ spec:
 - 更新并安装kubelet kubeadm kubectl  
 ``` # apt-get update && apt-get install -y kubelet kubeadm kubectl ```  
 ``` 指定版本为: ```  
-``` # apt-get update && apt-get install -y kubelet=11 kubeadm=11 kubectl=11 ```    
+``` # apt-get update && apt-get install -y kubelet=1.11.1-00 kubeadm=1.11.1-00 kubectl=1.11.1-00 ```    
 
 - 关闭swap  
 ``` sudo swapoff -a ```
