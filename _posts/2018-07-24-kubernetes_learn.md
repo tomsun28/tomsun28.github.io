@@ -215,7 +215,15 @@ k8s.gcr.io/pause:3.1
 ```
 
 - 初始化master  
-``` kubeadm init --kubernetes-version=v1.11.1 --pod-network-cidr=10.244.0.0/16 ```  
+``` kubeadm init --kubernetes-version=v1.11.1 --apiserver-advertise-address=116.196.81.106 --pod-network-cidr=10.244.0.0/16 ```  
+
+```
+--apiserver-advertise-address=<ip>
+指定apiserver的访问ip,ip默认为当前虚拟机的默认网卡ip.
+当ip为内网地址时,k8s集群只能搭建在网段内部,如果有需求通过外网ip来操作apiserver,需要在启动集群时添加可信参数 --apiserver-cert-extra-sans=116.196.81.106 将外网的ip添加进去.  
+当ip为外网地址时,可以实现不同网段的虚拟机组成k8s集群(目前我就是这个需要,一个京东云一个阿里云),暂时还没测这种跨公网的集群性能咋样,毕竟考虑到网速带宽等不如内网,但有一个优势就是可以整合不同的资源,不被同一云商所束缚,jd挂了ali还可以用.
+```
+
 
 - 成功之后会有join集群的脚步提示，记一下  
 ``` kubeadm join 192.168.0.3:6443 --token q6gmgt.3dakenwttapw4n2o --discovery-token-ca-cert-hash sha256:dbf69119e962456c239c5f7821ee9a0db46fb643fc40da8776d4e032de072085 ```  
