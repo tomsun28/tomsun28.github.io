@@ -204,6 +204,8 @@ spec:
 - 获取初始化所需版本docker镜像，k8s=v1.11.1在我的docker hub 's tomsun28可以拉取  
 
 ```
+# kubeadm config images list ##查询当前kubeadm版本所需images
+# kubeadm config images pull ##拉取这些images
 k8s=v1.11.1所对应镜像及版本:
 k8s.gcr.io/coredns:1.1.3
 k8s.gcr.io/etcd-amd64:3.2.18
