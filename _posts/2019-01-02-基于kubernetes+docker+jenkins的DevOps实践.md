@@ -277,7 +277,7 @@ spec:
           serviceName: nginx
           servicePort: http
 ````
-
+![image1](/images/posts/cicd/image7.PNG)  
 
 
 
