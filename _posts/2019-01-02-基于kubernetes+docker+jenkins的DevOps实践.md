@@ -10,8 +10,9 @@ tag: CICD
 
 ## 基于kubernetes+docker+jenkins的DevOps实践     
 
-之前自己的项目开发就搭了个cicd的环境，那时候是在本就小的可怜的服务器上搭了一套 ```jenkins + docker registry + docker``` ，见之前的笔记
-[docker学习](http://usthe.com/2017/12/docker_learn/)下面   
+之前自己的项目开发就搭了个cicd的环境，那时候是在本就小的可怜的服务器上搭了一套    
+```jenkins + docker registry + docker```   
+见之前的笔记 [docker学习](http://usthe.com/2017/12/docker_learn/)下面   
 总的差不多这样:  
 ![image1](/images/posts/cicd/image1.PNG)  
 
@@ -19,7 +20,7 @@ tag: CICD
 之后对```kubernetes```的接触后，就在之前的基础上加入```kubernetes```,其实也就是在服务器拉取镜像```docker run```的时候改变为通知```kubernetes```的```apiServer```对提前配置好的项目配置文件```xx.yaml```进行更新```kubectl appply -f xx.yaml```，它会对配置里的镜像拉取在多个```pod```里运行，当然还需要对应的```service```，如果需要暴露给外部还可以添个```ingress```。  
 
 <br>
-一个小服务器加本地一个闲置从机撑进去这么多东西很显然爆了，于是把```jenkins , docker registry```拆出来，用上了公共的ali云服务。  
+一个小服务器加本地一个闲置从机撑进去这么多东西很显然爆了，于是把```jenkins , docker registry```拆出来，用上了公共的ali云服务```CodePipeline,容器镜像服务```。  
 这里记录一下。  
 
 - - -
@@ -134,6 +135,148 @@ spec:
 到此cicd就差不多了，我们开发代码push到github仓库上，跟着DevOps流程走，最后项目就会自己运行到kubernetes集群里面了，pod挂了或者从机挂了，k8s会重新启保证设定数量的pod。
 
 ### 使用ingress对集群外暴露服务  
+
+这里使用的是```traefik-ingress```,在kubernetes中部署traefik有[官方部署手册](https://docs.traefik.io/user-guide/kubernetes/)，基本按着走一遍就能部署上去了。  
+
+整合部署的traefik.yaml:  
+
+````
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: traefik-ingress-controller
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - services
+      - endpoints
+      - secrets
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - extensions
+    resources:
+      - ingresses
+    verbs:
+      - get
+      - list
+      - watch
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: traefik-ingress-controller
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: traefik-ingress-controller
+subjects:
+- kind: ServiceAccount
+  name: traefik-ingress-controller
+  namespace: kube-system
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: traefik-ingress-controller
+  namespace: kube-system
+---
+kind: DaemonSet
+apiVersion: extensions/v1beta1
+metadata:
+  name: traefik-ingress-controller
+  namespace: kube-system
+  labels:
+    k8s-app: traefik-ingress-lb
+spec:
+  template:
+    metadata:
+      labels:
+        k8s-app: traefik-ingress-lb
+        name: traefik-ingress-lb
+    spec:
+      serviceAccountName: traefik-ingress-controller
+      terminationGracePeriodSeconds: 60
+      containers:
+      - image: traefik
+        name: traefik-ingress-lb
+        ports:
+        - name: http
+          containerPort: 80
+          hostPort: 80
+        - name: admin
+          containerPort: 8080
+        securityContext:
+          capabilities:
+            drop:
+            - ALL
+            add:
+            - NET_BIND_SERVICE
+        args:
+        - --api
+        - --kubernetes
+        - --logLevel=INFO
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: traefik-web-ui
+  namespace: kube-system
+spec:
+  selector:
+    k8s-app: traefik-ingress-lb
+  ports:
+  - name: web
+    port: 80
+    targetPort: 8080
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: traefik-web-ui
+  namespace: kube-system
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    traefik.frontend.rule.type: PathPrefixStrip
+
+spec:
+  rules:
+  - host: tom.usthe.com
+    http:
+      paths:
+      - path: /ingress
+        backend:
+          serviceName: traefik-web-ui
+          servicePort: web
+````
+使用```traefik来暴露service```:
+````
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: chess
+  namespace: default
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    traefik.frontend.rule.type: PathPrefixStrip
+spec:
+  rules:
+  - host: tom.usthe.com
+    http:
+      paths:
+      - path: /usthe
+        backend:
+          serviceName: usthe-service
+          servicePort: http
+      - path: /nginx
+        backend:
+          serviceName: nginx
+          servicePort: http
+````
 
 
 
