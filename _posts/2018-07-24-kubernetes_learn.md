@@ -20,6 +20,11 @@ tag: 分布式
 
 **2. kubernetes 常用命令**  
 
+- 设置k8s命令补全  
+```
+source <(kubectl completion bash) &&  echo "source <(kubectl completion bash)" >> ~/.bashrc
+```
+
 - 查看集群信息  
 ```
 kubectl cluster-info
@@ -36,6 +41,11 @@ kubectl run nginx-test  --replicas=3 --labels='app=nginx' --image=nginx:latest -
 kubectl get po
 kubectl get pod
 kubectl get pods
+```
+
+- 设置默认命名空间   
+```
+kubectl config set-context $(kubectl config current-context) --namespace=namespace-test 
 ```
 
 - 根据标签label查看集群中pod  
