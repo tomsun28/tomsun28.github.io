@@ -444,11 +444,34 @@ public class LockSupportDemo {
 
 ### 并发容器  
 
-### 原子类  
+* 非并发容器转并发处理 ``` Collections.synchronziedXXX() ```
+其本质是在容器外层加了```synchronized(mutex)```  
+
+* 并发```map - CpncurrentHashMap - 1.7 segment 1.8 synchronzied cas```  
+* 并发```ArrayList - RCU - read copy update - CopyOnWriteArrayList```  
+* 并发```Queue - ConcurrentLinkedQueue``` 非阻塞队列  
+* 阻塞队列 ``` BlockingQueue - ReentrantLock Condition ```
+  1. ```ArrayBlockingQueue```数组阻塞队列
+  2. ```LinkedBlockingQueue```列表阻塞队列
+  3. ```SynchronousQueue```此阻塞队列无容量立即转发
+  4. ```PriorityBlockingQueue```优先级阻塞队列
+  5. ```DelayedWorkQueue```延迟阻塞队列  
+
+### 原子类   
+
+* ```AtomicBoolean```  
+* ```AtomicInteger```  
+* ```AtomicLong```  
+* ```LongAddr```  
+* ```AtomicRefrence```  
+* ```AtomicStampedRefreence```  
 
 ### other  
 
-
+* ```ThreadLocal```线程本地变量  
+* ```volatile```可见关键字  
+* ```Future```非阻塞模式  
+* ```CompletableFuture```非阻塞  
 
 <br>
 <br>
