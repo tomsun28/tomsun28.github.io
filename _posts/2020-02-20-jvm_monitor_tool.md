@@ -140,7 +140,16 @@ GCT       | 总耗gc时间
 
 
 
+### jvm奔溃hs_err_pid.log分析  
 
+* 默认当前在工作目录，通过 ```-XX:ErrorFile=/opt/log/hs_err_pid<pid>.log``` 设定生成路径  
+* 相关文章 [JVM致命错误日志(hs_err_pid.log)分析](https://blog.csdn.net/github_32521685/article/details/50355661)
+
+### jvm监控相关好文  
+
+* [JVM监控命令详解](https://www.cnblogs.com/rainy-shurun/p/5732341.html)
+* [如何使用jstack分析线程状态](https://www.cnblogs.com/wuchanming/p/7766994.html)
+* [Java语言定义的线程状态分析](https://www.cnblogs.com/trust-freedom/p/6606594.html)
 
 
 
