@@ -49,11 +49,29 @@ alter table school add primary key stu_name_key(stu_name);
 
 #### b+树索引  
 
-todo
+* 聚簇索引 - innodn支持,MyISAM不支持  
+
+  1. 一张表只能有一个聚簇索引  
+  2. 数据的存储是：以聚簇索引构建b+树,叶子节点存储数据页  
+  3. 聚簇索引查找数据直接就在b+树查找一次就好  
+
+* 非聚簇索引    
+  
+  1. 非聚簇索引自己构建b+树，叶子节点存储聚簇索引值  
+  2. 非聚簇索引查询需遍历2次b+树，先在自己的索引b+树找出存储在叶子节点的聚簇索引值，再根据聚簇索引值查找对应b+树的数据  
+
 
 #### 索引(b+树)设置原则  
 
-todo
+> mysql只对以下操作使用索引: <,<=,=,>,>=,between,in,以及特殊like(不以通配符%,_开头的情形)  
+> 最左匹配原则  
+> 离散度高  
+> 索引列不参与计算  
+> 教频繁查询字段应创建索引  
+> 唯一性太差的不应创建索引,eg：性别 
+> 更新频繁的字段不应创建索引  
+> 不会出现where查询的字段不应创建索引  
+> 使用短索引  
 
 ----
 
@@ -92,7 +110,7 @@ todo
 
 #### 并发性  
 
-读写锁
+读写锁  
 mvcc - 多版本控制 + 乐观锁 + undo log  
 mvcc - 版本链(trx_id,roll_pointer)  ReadView - m_ids  
 [MySQL事务隔离级别和MVCC](https://juejin.im/post/5c9b1b7df265da60e21c0b57)  
@@ -114,11 +132,17 @@ mvcc - 版本链(trx_id,roll_pointer)  ReadView - m_ids
 > 即对读和写每次都加锁，串行化处理  
 > 无脏读，无不可重复读，无幻读  
 
+----
+
+## binlog ##  
+
+> 纪录mysql内部的增删改DML DDL操作  
+> 数据恢复
+> 主从复制
 
 
-
-
-
+<br>
+<br>
 
 **相关参考**  
 [Mysql事务实现原理](https://juejin.im/post/5cb2e3b46fb9a0686e40c5cb)  
