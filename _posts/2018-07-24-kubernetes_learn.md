@@ -111,9 +111,15 @@ kubectl delete deploy nginx-test  #删除部署的deploy(删除其对于的pod�
 kubectl delete svc nginx-service  #删除创建的service
 
 ```
+**3.易混淆辨析**  
 
+1. ``` nodePort, port targetPort containerPort  ```  
+nodePort是外部访问k8s内部service的方式，即nodeIp:nodePort  
+port是k8s内部服务之前访问service的入口端口，即clusterIp:port  
+targetPort是service设置的port与pod内部容器暴露的端口的映射(targetPort:port)，targetPort即容器的暴露端口，port即service端口  
+containerPort是容器的暴露端口，跟targetPort一样，不过其不作用而在service在deploy  
 
-**3. 应用创建部署yaml文件**  
+**4. 应用创建部署yaml文件**  
 
 **tomsun28之后的k8s应用部署修改，都确定使用apply形式部署更新，使用git版本控制创建资源，好处多多**  
 
