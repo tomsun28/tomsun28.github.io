@@ -85,6 +85,14 @@ tag: others
 图片 markdown还没办法指定图片大小 使用 <img>标签 <img src="path.png" height="100" width="100"    markdown图片格式   ![图片名](图片链接地址)。
 ```
 <br>
+
+```
+markdown 页内跳转  
+
+[跳转到标题一](#标题一名称)
+```
+[跳转到(这是一个标题)](#这是一个标题)  
+
 <br>
 <br>
 
