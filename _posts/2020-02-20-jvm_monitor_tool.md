@@ -139,6 +139,15 @@ CGCT      | 并发垃圾搜集耗时
 GCT       | 总耗gc时间
 
 
+### 分析java占用cpu或内存高的线程  
+
+* `top` 查看高内存或高cpu的进程pid(大写P排序cpu，大写M排序内存)  
+* `jps` 查看要看的java进程pid  
+
+* `top -Hp <pid>` 列出该pid进程下的所有线程信息(列表中PID为线程十进制id)  
+* 通过(大写P排序cpu，大写M排序内存)查出占用高的线程id  
+* `printf "%x\n" <threadId>`转16进制  
+* `jstack <pid> | grep <threadId>` 查看该线程堆栈  
 
 ### jvm奔溃hs_err_pid.log分析  
 
