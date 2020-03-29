@@ -154,6 +154,20 @@ GCT       | 总耗gc时间
 * 默认当前在工作目录，通过 ```-XX:ErrorFile=/opt/log/hs_err_pid<pid>.log``` 设定生成路径  
 * 相关文章 [JVM致命错误日志(hs_err_pid.log)分析](https://blog.csdn.net/github_32521685/article/details/50355661)
 
+### arthas生产环境定位  
+
+* watch观测方法调用前后数据  
+
+````
+watch com.usthe.sureness.WatchClass demoMethod "{params,target,returnObj}" -x 3 -b -s  
+params      - 方法参数信息
+target      - 方法所在对象的参数信息(对象变量,类变量等..)
+returnObj   - 方法返回值信息  
+-x          - 表示对对象值的遍历深度（list对象深度1只能看到对象内容，深度2能看到参数数量等信息，深度3能看到list包含的对象的具体值信息）-x 3表示遍历深度3  
+-b          - 表示观测方法调用前  
+-s          - 表示观测方法调用后  
+````
+
 ### jvm监控相关好文  
 
 * [JVM监控命令详解](https://www.cnblogs.com/rainy-shurun/p/5732341.html)
