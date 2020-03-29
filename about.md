@@ -7,7 +7,7 @@ title: about me
 <br  />
 
 <br  />
-
+Nobody can go back and start a new beginning,but can start today and make a new ending.  
 <br  />
 
 <br  />
@@ -80,8 +80,3 @@ title: about me
 <br  />
 
 <br  />
-
-
-
-
-在一个变化如此之快的世界里，最大的风险就是不冒风险。                                             --zuckerberg
