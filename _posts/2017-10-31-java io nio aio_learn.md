@@ -397,6 +397,21 @@ public final class ServerNormal {
     2. 调用 flip() 方法；
     3. 从 Buffer 中读取数据；
     4. 调用 clear() 方法或者 compact() 方法。
+    
+    
+    limit - buffer读写上限，
+    posttion - 读写时当前游标的位置
+    capacity - 缓冲区的最大容量
+    mark     - 快照点，供reset恢复到快照点
+    
+    clear 清空缓冲区  posttion=0,limit=capacity,mark=-1
+    flip  反转缓冲区  limit=position,position=0,mark=-1
+    rewind 重0开始读缓冲区 position=0,mark=-1
+    reset 根据mark恢复缓冲区  position=mark
+    
+    compact 压实缓冲区，复用缓冲区空间，将已读的内容丢弃
+    slice 共享缓冲区空间limit-position，其获取的是同一缓冲区
+    
 
   当向 Buffer 写入数据时，Buffer 会记录下写了多少数据。一旦要读取数据，需要通过 flip() 方法将 Buffer 从写模式切换到读模式。在读模式下，可以读取之前写入到 Buffer 的所有数据。  
   一旦读完了所有的数据，就需要清空缓冲区，让它可以再次被写入。有两种方式能清空缓冲区：调用 clear() 或 compact() 方法。clear() 方法会清空整个缓冲区。compact() 方法只会清除已经读过的数据。任何未读的数据都被移到缓冲区的起始处，新写入的数据将放到缓冲区未读数据的后面。  
