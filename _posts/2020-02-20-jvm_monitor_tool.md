@@ -168,6 +168,12 @@ returnObj   - 方法返回值信息
 -s          - 表示观测方法调用后  
 ````
 
+### 端口情况分析  
+
+````
+netstat -an | awk '{print $6}' | sort | uniq -c | sort -rn         - 查看端口各个状态的数量
+````
+
 ### jvm监控相关好文  
 
 * [JVM监控命令详解](https://www.cnblogs.com/rainy-shurun/p/5732341.html)
