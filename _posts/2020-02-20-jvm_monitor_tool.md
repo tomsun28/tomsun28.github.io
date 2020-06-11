@@ -171,6 +171,11 @@ returnObj   - 方法返回值信息
 ### 端口情况分析  
 
 ````
+ulimit -a | grep "open files"                                      - 查看系统设置的单个进程最大可以打开的文件句柄数
+netstat -a | wc -l                                                 - 所有类型的端口数量
+netstat -t | wc -l                                                 - tcp类型的端口数量
+netstat -an | awk '{print $5}' | sort | uniq -c | sort -nr | head -n 20   - 访问三方IP-启动的端口数量，查看前20
+netstat -tn | awk '{print $5}' | sort | uniq -c | sort -nr | head -n 20   - 访问三方TCP类型的IP-启动的端口数量，查看前20
 netstat -an | awk '{print $6}' | sort | uniq -c | sort -rn         - 查看端口各个状态的数量
 ````
 
