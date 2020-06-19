@@ -60,8 +60,9 @@ tag: network
   5. 204 - no content 请求已成功，但客户端无需离开当前页面  
 
 * 3XX - 重定向  
-  1. 301 - multiple choices 指示所请求的资源已明确移动到location标题给定的url  
-  2. 303 - see other 返回一个响应文档url，其可能是静态资源也可能是其他资源  
+  1. 301 - multiple choices 指示所请求的资源已明确移动到location标题给定的url,永久性转移  
+  2. 302 - multiple choices 指示所请求的资源已明确移动到location标题给定的url,暂时性转移
+  3. 303 - see other 返回一个响应文档url，其可能是静态资源也可能是其他资源  
 
 * 4XX - 客户端错误  
   1. 400 - bad request 来自客户端错误的请求，服务端不识别  
