@@ -730,9 +730,12 @@ img::-moz-selection {
     display: inline-block;
     position: relative;
     width: 100%;
-    border-color: #666;
-    color: #666;
-    /*opacity: .8; */
+    border-color: rgb(243 18 80 / 60%);
+    color: #248b99;
+    /* opacity: .8; */
+    font-size: larger;
+    font-weight: bold;
+    font-family: fantasy;
   }
 
   .navigation__item a:hover {
