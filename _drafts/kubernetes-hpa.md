@@ -9,299 +9,345 @@ tag: 云原生
 
 最近对公司一个项目进行了hpa能力集成，之前pod的扩容都是手工去修改，手工的维护当然没有自动化好，手工确定pod的数量很难平衡环境资源和系统性能之间的点，
 遇到性能下降，固然拉几个pod马上解决问题，但之后的资源浪费也是存在的，当然为了省资源，把pod数量降到一个低水平，性能又提不上去。
-hpa记得是k8s 1.6就出来了
+hpa记得是k8s 1.6就出来了，最初了话只支持指标比较少cpu 内存,后面的版本慢慢支持了自定义指标单元。这里也就是我们下面要实践的hpa 自定义指标。
+为什么使用监控自定义指标而使用原生支持的cpu 内存不能满足,对于业务pod来说，pod的横向自动伸缩锁所关注的指标除了pod本身的cpu内存外，
+qps,队列大小等系列业务指标更能体现当前pod在一个什么样的负载水平，使用这些指标也能更好的贴合业务，流量处理数大时扩，不忙就缩。  
 
+### 使用自定义指标进行 kubernetes hpa实践  
 
-**1. 核心组件**  
+话不多说开始弄  
 
-- etcd 保存整个集群的状态信息，感觉相当于k8s的数据库  
-- apiserver 提供对k8s资源操作的唯一入口，并提供认证授权，访问控制，API注册与发现等机制  
-- controller manager 负责维护集群的状态，eg:故障检测，自动扩展pod，滚动更新等  
-- scheduler 负责对资源的调度，按着预定的调度策略将pod调度到相应的集群上  
-- kubelet 负责维护容器的生命周期，相当于在node上的agent，负责管理pods和它们上面的容器，images镜像、volumes等  
-- kube-proxy 负责为service提供集群内部的服务发现和负载均衡  
+1. 部署指标采集adapter k8s, hpa是通过adapter来搜集数据的   
 
-**2. kubernetes 常用命令**  
+主流的或者说被很多文章写的k8s hpa 自定义指标 adapter 是 k8s-prometheus-adapter， 但这个并不是很适合我们，我们想要的是一个轻量的指标采集器adapter,
+它可以去采集pod暴露出来的restful接口指标，也可以去采集外部接口指标，关键它很轻量。
+刚好有个adapter很合适 - (zalando-incubator/kube-metrics-adapter](https://github.com/zalando-incubator/kube-metrics-adapter)  
 
-- 设置k8s命令补全  
-```
-source <(kubectl completion bash) &&  echo "source <(kubectl completion bash)" >> ~/.bashrc
-```
+开始部署  
 
-- 查看集群信息  
-```
-kubectl cluster-info
-```
-
-- 在集群中运行一个应用程序  
-```
-kubectl run nginx-test  --replicas=3 --labels='app=nginx' --image=nginx:latest --port=80  
-#使用kubectl run命令启动一个pod，自定义名称为nginx-test，启动了3个pod副本，并给pod打上标签app=nginx，这个pod拉取docker镜像nginx:latest，开放端口80
-```
-
-- 查看集群中所有pod  
-```
-kubectl get po
-kubectl get pod
-kubectl get pods
-```
-
-- 设置默认命名空间   
-```
-kubectl config set-context $(kubectl config current-context) --namespace=namespace-test 
-```
-
-- 根据标签label查看集群中pod  
-```
-kubectl get pods -l app
-kubectl get pods -l app=nginx
-```
-
-- 查看标签为app=nginx的pod在集群中具体分配在哪个节点和pod的ip  
-```
-kubectl get pods -l app=nginx -o wide
-```
-
-- 查看pod的详细信息  
-```
-kubectl describe pods <podname>
-```
-
-- 查看集群中的deployment(其他命令与pod类似)  
-```
-kubectl get deploy
-```
-
-- 查看集群中的replica set(其他命令与pod类似)  
-```
-kubectl get replicaset
-kubectl get rs
-```
-
-- 创建一个service，集群中的资源通过service与外界交互  
-```
-kubectl expose deploy nginx-test --port=8080 --target-port=80 --name=nginx-service
-#k8s集群通过deploy来管理，导出名为nginx-test的deploy，为其创建名为nginx-service的服务开放给外界，使外界能通过nginx-service来和nginx-test交互，外部端口为8080,内部端口为80
-```
-
-- 查看集群中的服务(其他命令与pod类似)  
-```
-kubectl get svc
-```
-
-- 查看pod中容器的日志  
-```
-kubectl log <podname>    #查看指定pod内容器的日志  
-kubectl log -l app=nginx #查看标签lable为app=nginx下的pod的容器日志
-```
-
-- pod的副本的扩容和缩容  
-```
-kubectl scale deploy nginx-test --replicas10
-#通过kubectl scale将名为nginx-test的deploy重新定义有10个副本pod
-```
-
-- 查看pod副本扩容缩容的实时进度  
-```
-kubectl rollout status deploy nginx-test
-```
-
-- 删除资源  
-**pod和rs不能直接被删除,其被deploy控制,即使删除了某一pod,也会创建新的pod来对应配置pod副本数量,要想删除pod,只能用删除其deploy来删除,或者变更pod副本配置缩容(如上)**
-
-```
-kubectl delete deploy nginx-test  #删除部署的deploy(删除其对于的pod和rs)
-kubectl delete svc nginx-service  #删除创建的service
-
-```
-**3.易混淆辨析**  
-
-1. ``` nodePort, port targetPort containerPort  ```  
-nodePort是外部访问k8s内部service的方式，即nodeIp:nodePort  
-port是k8s内部服务之前访问service的入口端口，即clusterIp:port  
-targetPort是service设置的port与pod内部容器暴露的端口的映射(targetPort:port)，targetPort即容器的暴露端口，port即service端口  
-containerPort是容器的暴露端口，跟targetPort一样，不过其不作用而在service在deploy  
-
-**4. 应用创建部署yaml文件**  
-
-**tomsun28之后的k8s应用部署修改，都确定使用apply形式部署更新，使用git版本控制创建资源，好处多多**  
-
-```
-kubectl apply -f nginx.yaml    ##更新式创建资源，如果不存在此资源则创建，如存在改动则调整资源(推荐)
-kubectl delete -f nginx.yaml   #资源(pod,deployment,service,replicaset...)删除销毁
-```
-
-- kubernetes部署nginx集群  
-
-```nginx.yaml :```
-
-```
-# ----------------------nginx--------------------- #
-
-# ------nginx deployment------ #
+kubectl apply -f adapter-deployment.yaml    
+````
+apiVersion: apps/v1
 kind: Deployment
-apiVersion: apps/v1beta2
 metadata:
- name: nginx-deployment
- labels: 
-  app: nginx
+  name: kube-metrics-adapter
+  namespace: kube-system
+  labels:
+    application: kube-metrics-adapter
+    version: latest
 spec:
- replicas: 3
- selector:
-  matchLabels:
-   app: nginx
- template:
-  metadata:
-   labels:
-    app: nginx
-  spec:
-   containers:
-   - name: nginx
-     image: 192.167.2.144:5000/nginx:latest
-     ports:
-     - containerPort: 80
+  replicas: 1
+  selector:
+    matchLabels:
+      application: kube-metrics-adapter
+  template:
+    metadata:
+      labels:
+        application: kube-metrics-adapter
+        version: latest
+    spec:
+      serviceAccountName: custom-metrics-apiserver
+      containers:
+      - name: kube-metrics-adapter
+        image: registry.opensource.zalan.do/teapot/kube-metrics-adapter:latest
+        args:
+        resources:
+          limits:
+            cpu: 100m
+            memory: 100Mi
+          requests:
+            cpu: 100m
+            memory: 100Mi
+````
 
+kubectl apply -f adapter-rbac.yaml    
+````
+
+kind: ServiceAccount
+apiVersion: v1
+metadata:
+  name: custom-metrics-apiserver
+  namespace: kube-system
 ---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: custom-metrics-server-resources
+rules:
+- apiGroups:
+  - custom.metrics.k8s.io
+  resources: ["*"]
+  verbs: ["*"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: external-metrics-server-resources
+rules:
+- apiGroups:
+  - external.metrics.k8s.io
+  resources: ["*"]
+  verbs: ["*"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: custom-metrics-resource-reader
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - namespaces
+  - pods
+  - services
+  verbs:
+  - get
+  - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: custom-metrics-resource-collector
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - patch
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - list
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  - statefulsets
+  verbs:
+  - get
+- apiGroups:
+  - extensions
+  resources:
+  - ingresses
+  verbs:
+  - get
+- apiGroups:
+  - autoscaling
+  resources:
+  - horizontalpodautoscalers
+  verbs:
+  - get
+  - list
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: hpa-controller-custom-metrics
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: custom-metrics-server-resources
+subjects:
+- kind: ServiceAccount
+  name: horizontal-pod-autoscaler
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: hpa-controller-external-metrics
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: external-metrics-server-resources
+subjects:
+- kind: ServiceAccount
+  name: horizontal-pod-autoscaler
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: custom-metrics-auth-reader
+  namespace: kube-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: extension-apiserver-authentication-reader
+subjects:
+- kind: ServiceAccount
+  name: custom-metrics-apiserver
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: custom-metrics:system:auth-delegator
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: system:auth-delegator
+subjects:
+- kind: ServiceAccount
+  name: custom-metrics-apiserver
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: custom-metrics-resource-collector
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: custom-metrics-resource-collector
+subjects:
+- kind: ServiceAccount
+  name: custom-metrics-apiserver
+  namespace: kube-system
+````
 
-# -------nginx-service--------- #
+kubectl apply -f custom-metrics-apiservice.yaml    
+````
+
+apiVersion: apiregistration.k8s.io/v1beta1
+kind: APIService
+metadata:
+  name: v1beta1.custom.metrics.k8s.io
+spec:
+  service:
+    name: kube-metrics-adapter
+    namespace: kube-system
+  group: custom.metrics.k8s.io
+  version: v1beta1
+  insecureSkipTLSVerify: true
+  groupPriorityMinimum: 100
+  versionPriority: 100
+````
+
+kubectl apply -f adapter-service.yaml    
+````
+
 apiVersion: v1
 kind: Service
 metadata:
- name: nginx-service
+  name: kube-metrics-adapter
+  namespace: kube-system
 spec:
- type: NodePort
- ports:
- - port: 80
-   targetPort: 80
-   nodePort: 30001
- selector:
-  app: nginx
-
-```
-
-```kubectl apply -f nginx.yaml```
-
-
-
-
-
-
-
-
-####  记一下对kubernetes集群的搭建部署  
-
-**ubantu下用kubeadm搭建kubernetes集群**  
-
-[官方安装教程](https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/)
-
-1.  ubuntu + docker 环境  (目前是两个服务器组建集群server1+server2)
-
-2. 安装kubelet kubeadm和kubectl  
-
-- 安装 apt-transport-https  
-``` # apt-get update && apt-get install -y apt-transport-https ```  
-
-- 安装gpg证书(阿里镜像仓库的k8s)
-``` # curl https://mirrors.aliyun.com/kubernetes/apt/doc/apt-key.gpg | apt-key add - ```  
-
-- 更新软件源信息  
-```` 
- # cat << EOF >/etc/apt/sources.list.d/kubernetes.list  
-   deb https://mirrors.aliyun.com/kubernetes/apt/ kubernetes-xenial main  
-   EOF 
+  ports:
+  - port: 443
+    targetPort: 443
+  selector:
+    application: kube-metrics-adapter
 ````
-- 更新并安装kubelet kubeadm kubectl  
-``` # apt-get update && apt-get install -y kubelet kubeadm kubectl ```  
-``` 指定版本为: ```  
-``` # apt-get update && apt-get install -y kubelet=1.11.1-00 kubeadm=1.11.1-00 kubectl=1.11.1-00 ```    
-
-- 关闭swap  
-``` sudo swapoff -a ```
-
-3. master server1上初始化部署kubernetes的master  
-
-- 获取初始化所需版本docker镜像，k8s=v1.11.1在我的docker hub 's tomsun28可以拉取  
-
-```
-# kubeadm config images list ##查询当前kubeadm版本所需images
-# kubeadm config images pull ##拉取这些images
-k8s=v1.11.1所对应镜像及版本:
-k8s.gcr.io/coredns:1.1.3
-k8s.gcr.io/etcd-amd64:3.2.18
-k8s.gcr.io/kube-apiserver-amd64:v1.11.1
-k8s.gcr.io/kube-controller-manager-amd64:v1.11.1
-k8s.gcr.io/kube-proxy-amd64:v1.11.1
-k8s.gcr.io/kube-scheduler-amd64:v1.11.1
-k8s.gcr.io/pause:3.1
-```
-
-- 初始化master  
-``` kubeadm init --kubernetes-version=v1.11.1 --apiserver-advertise-address=116.196.81.106 --pod-network-cidr=10.244.0.0/16 ```  
-
-```
---apiserver-advertise-address=<ip>
-指定apiserver的访问ip,ip默认为当前虚拟机的默认网卡ip.
-当ip为内网地址时,k8s集群只能搭建在网段内部,如果有需求通过外网ip来操作apiserver,需要在启动集群时添加可信参数 --apiserver-cert-extra-sans=116.196.81.106 将外网的ip添加进去.  
-当ip为外网地址时,可以实现不同网段的虚拟机组成k8s集群(目前我就是这个需要,一个京东云一个阿里云),暂时还没测这种跨公网的集群性能咋样,毕竟考虑到网速带宽等不如内网,但有一个优势就是可以整合不同的资源,不被同一云商所束缚,jd挂了ali还可以用.
-```
 
 
-- 成功之后会有join集群的脚步提示，记一下  
-``` kubeadm join 192.168.0.3:6443 --token q6gmgt.3dakenwttapw4n2o --discovery-token-ca-cert-hash sha256:dbf69119e962456c239c5f7821ee9a0db46fb643fc40da8776d4e032de072085 ```  
+2. 部署需要进行自动伸缩的应用-其需要提供我们监控的rest接口   
 
-- 根据output提示，to start using your cluster, you need to run(no root user )  
+kubectl apply -f deployment.yaml  
+
 ````
-mkdir -p $HOME/.kube
-sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-sudo chown $(id -u):$(id -g) $HOME/.kube/config
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: custom-metrics-consumer
+  labels:
+    application: custom-metrics-consumer
+    version: latest
+spec:
+  selector:
+    matchLabels:
+      application: custom-metrics-consumer
+  template:
+    metadata:
+      labels:
+        application: custom-metrics-consumer
+        version: latest
+    spec:
+      containers:
+      - name: custom-metrics-consumer
+        image: mikkeloscar/custom-metrics-consumer:latest
+        args:
+        - --fake-queue-length=2000
+        resources:
+          limits:
+            cpu: 10m
+            memory: 25Mi
+          requests:
+            cpu: 10m
+            memory: 25Mi
 ````
-或者(root user)：  
-``` export KUBECONFIG=/etc/kubernetes/admin.conf ```  
 
+3. 部署管理伸缩上面那个应用的hpa  
 
-4. 安装 pod network 提供 pods 节点之前相互通信  
+kubectl apply -f hpa.yaml   
+````
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: custom-metrics-consumer
+  namespace: default
+  labels:
+    application: custom-metrics-consumer
+  annotations:
+    # metric-config.<metricType>.<metricName>.<collectorName>/<configKey>
+    metric-config.pods.queue-length.json-path/json-key: "$.queue.length"
+    metric-config.pods.queue-length.json-path/path: /metrics
+    metric-config.pods.queue-length.json-path/port: "9090"
+    # metric-config.object.requests-per-second.prometheus/query: |
+    #   scalar(sum(rate(skipper_serve_host_duration_seconds_count{host="custom-metrics_example_org"}[1m])))
+    # metric-config.object.requests-per-second.prometheus/per-replica: "true"
+    # metric-config.object.requests-per-second.skipper/interval: "1s"
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: custom-metrics-consumer
+  minReplicas: 1
+  maxReplicas: 10
+  metrics:
+  - type: Pods
+    pods:
+      metric:
+        name: queue-length
+      target:
+        averageValue: 1k
+        type: AverageValue
 
-- 运行下面命令设置 ````/proc/sys/net/bridge/bridge-nf-call-iptables````为1  
-```
-sysctl net.bridge.bridge-nf-call-iptables=1
-```
+  - type: Object
+    object:
+      describedObject:
+        apiVersion: extensions/v1beta1
+        kind: Ingress
+        name: custom-metrics-consumer
+      metric:
+        name: requests-per-second
+      target:
+        averageValue: "10"
+        type: AverageValue
+  - type: External
+    external:
+      metric:
+        name: sqs-queue-length
+        selector:
+          matchLabels:
+            queue-name: foobar
+            region: eu-central-1
+      target:
+        averageValue: "30"
+        type: AverageValue
+````
 
-- 选择 flannel 作为 pod network  
-``` 
-kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/c5d10c8/Documentation/kube-flannel.yml
-```
-
-- 要使 flannel 能正常使用,需要在master初始化时 kubeadm init 添加对应pod-network-cidr  
-``` kubeadm init --pod-network-cidr=10.244.0.0/16 ```  
-
-- 解除master不能调度运行其他pod的限制  
-``` kubectl taint nodes --all node-role.kubernetes.io/master- ```  
-
-
-5. server2上部署kebernetes并作为节点join to master  
-
-- 在server2服务器上执行步骤2  
-
-- 作为node节点加入到master集群中  
-``` kubeadm join --token <token> <master-ip>:<master-port> --discovery-token-ca-cert-hash sha256:<hash> ```  
-
-6. 在master上查看集群node节点分布  
-
-``` kubectl get nodes ```
-
-7. 对kubeadm所做的搭建进行undo  revert   
-
-``` kubeadm reset ```  
-
-
-
+4. 弄完之后就可以开始对你的应用测试啦   
 
 
 **分享一波阿里云代金券[快速上云](https://promotion.aliyun.com/ntms/act/ambassador/sharetouser.html?userCode=rjlzz3uf&utm_source=rjlzz3uf)**
 <br>
 
-*参考来自*
-[kubernetes官方部署文档](https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/)  
 <br>
 <br>
 *转载请注明* [from tomsun28](http://usthe.com)  
