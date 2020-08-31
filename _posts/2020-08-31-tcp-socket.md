@@ -1,3 +1,10 @@
+---
+layout: post
+title: tcp-socket异常报文分析
+date: 2020-08-31
+tag: network
+---
+
 # tcp-socket连接过程中异常问题定位  
 
 ### tcp连接中出现RST报文的情况   
