@@ -49,7 +49,7 @@ spec:
       serviceAccountName: custom-metrics-apiserver
       containers:
       - name: kube-metrics-adapter
-        image: registry.opensource.zalan.do/teapot/kube-metrics-adapter:latest
+        image: banzaicloud/kube-metrics-adapter:latest
         args:
         resources:
           limits:
@@ -290,7 +290,7 @@ apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:
   name: custom-metrics-consumer
-  namespace: default
+  namespace: custom-your-deployment-namesapce
   labels:
     application: custom-metrics-consumer
   annotations:
@@ -298,10 +298,6 @@ metadata:
     metric-config.pods.queue-length.json-path/json-key: "$.queue.length"
     metric-config.pods.queue-length.json-path/path: /metrics
     metric-config.pods.queue-length.json-path/port: "9090"
-    # metric-config.object.requests-per-second.prometheus/query: |
-    #   scalar(sum(rate(skipper_serve_host_duration_seconds_count{host="custom-metrics_example_org"}[1m])))
-    # metric-config.object.requests-per-second.prometheus/per-replica: "true"
-    # metric-config.object.requests-per-second.skipper/interval: "1s"
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -317,29 +313,13 @@ spec:
       target:
         averageValue: 1k
         type: AverageValue
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 50
 
-  - type: Object
-    object:
-      describedObject:
-        apiVersion: extensions/v1beta1
-        kind: Ingress
-        name: custom-metrics-consumer
-      metric:
-        name: requests-per-second
-      target:
-        averageValue: "10"
-        type: AverageValue
-  - type: External
-    external:
-      metric:
-        name: sqs-queue-length
-        selector:
-          matchLabels:
-            queue-name: foobar
-            region: eu-central-1
-      target:
-        averageValue: "30"
-        type: AverageValue
 ````
 
 4. 弄完之后就可以开始对你的应用测试啦   
