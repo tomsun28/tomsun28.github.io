@@ -318,6 +318,13 @@ cat /etc/passwd | awk -F ":" 'print $1'  #显示输出用":"分隔符将passwd�
 
 ````
 
+**xargs**  
+````
+xargs能够捕获一个命令的输出，然后传递给另外一个命令
+kubectl get po | grep tom-server | awk '{print $1}' | xargs kubectl delete po   # 批量删除tom-server*名称的pod  
+````
+
+
 **sed**  
 
 ````
