@@ -88,8 +88,9 @@ kubectl get svc
 
 - 查看pod中容器的日志  
 ```
-kubectl log <podname>    #查看指定pod内容器的日志  
-kubectl log -l app=nginx #查看标签lable为app=nginx下的pod的容器日志
+kubectl logs -f <podname>    #查看指定pod内容器的日志  
+kubectl logs -f -l app=nginx #查看标签lable为app=nginx下的pod的容器日志
+kubectl logs -f deployment/nginx-deploy   #查看nginx-deploy下的所有pod的日志
 ```
 
 - pod的副本的扩容和缩容  
