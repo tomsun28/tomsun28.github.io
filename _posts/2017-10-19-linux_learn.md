@@ -65,7 +65,8 @@ tag: linux
 	700 rwx------
 	744 rwxr--r--
 	755 rwxr-xr-x 
-	777 rwxrwxrwx 
+	777 rwxrwxrwx  
+	每一文件或目录的访问权限都有三组，每组用三位表示，分别为文件属主的读、写和执行权限；与属主同组的用户的读、写和执行权限；系统中其他用户的读、写和执行权限   
 	chmod o+w temp 表示给其他人授予写temp文件的权限
 	chmod go-rw temp 表示删除所有者所在群组和其他人对temp文件的读写权限
 	+为增加,-为删除
