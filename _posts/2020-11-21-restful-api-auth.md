@@ -35,14 +35,17 @@ tag: restful api auth
   认证鉴权之前还有个重要的一点就是路径匹配，即我们需要知道用户访问的restful api和我们从数据源获取的配置数据里面的api或者规则进行匹配，匹配成功的我们才知道这个api被赋权给了谁，这个api是否免登录等。当然你也可以使用类似spring aop一样的切面在方法调用前认证鉴权，这样就免去了路径匹配，但是这样的话就需要我们写死代码，做不到动态修改权限信息。api url路径匹配主流的就是ant匹配，看spring security 或者apache shiro都是用ant匹配规则，用请求的url和配置的链一个一个`ant`匹配。这其中是否还有更高效的方式呢。
 
 <br>  
-这是restful api 权限设计的粗略讨论，之后的文章会讨论下具体的实现细节，配置数据源为数据库时的表设计，jwt等各个认证方式实现，token刷新，路径过滤链匹配更优化解等。  
+----   
 
-<br>  
-**额外:**  
-介绍一款简单高效面向restful api的jvm认证鉴权框架，shiro,spring security的第3个选择。  
+上面就是对restful api 权限设计的粗略讨论，之后的文章会讨论下具体的实现细节，配置数据源为数据库时的表设计，jwt等各个认证方式实现，token刷新，路径过滤链匹配更优化解等。  
+
+<br>    
+
+#### 额外    
+介绍一款简单高效面向restful api的jvm认证鉴权框架，shiro,spring security之外的第3个选择。  
 
 **sureness**  [主页](https://su.usthe.com/) - https://su.usthe.com/   [github](https://github.com/tomsun28/sureness/) - https://github.com/tomsun28/sureness/  
-> 基于 rbac 主要关注于对 restful api 的安全保护  
+>  基于 rbac 主要关注于对 restful api 的安全保护  
 >  无特定框架依赖(本质就是过滤器处拦截判断,已有springboot,quarkus,javalin,ktor等demo)  
 >  支持动态修改权限配置(动态修改哪些api需要被认证，可以被谁访问)    
 >  支持主流http容器  servlet 和 jax-rs  
