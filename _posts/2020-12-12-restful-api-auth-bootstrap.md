@@ -10,9 +10,11 @@ tag: restful api auth
   在现在主流的前后端分离的系统中，或者是专注于提供api服务的系统，如何保护好所提供的后端restful api，使得非常重要。保护api的方面很多，限流，防刷，校验可以说都是保护，今天来谈谈很重要的api的认证鉴权保护，大概的思路。需求两点:首先认证 -- 我们可以配置哪些api需要用户认证通过才能访问哪些可以直接访问，还有就是鉴权 -- 我们可以配置管理哪些api对于某个用户能调用哪些不能调用。  
   在上篇[restful api权限设计 - 初探](https://usthe.com/2020/11/restful-api-auth/)我们大致说到了要保护我们restful api的认证鉴权所需的方向点。多说无益，现在就一步一步来实战下基于springboot sureness来快速搭建一个完整功能的权限认证项目。  
 
+<br>  
+
 这里为了照顾到刚入门的同学，图文展示了每一步操作。有基础可直接略过。  
 
-#### 初始化一个springboot web工程  
+### 初始化一个springboot web工程  
 
 在IDEA如下操作:  
 
@@ -26,7 +28,7 @@ tag: restful api auth
 
 ![image5](/images/posts/bootstrap/springboot5.PNG)  
 
-#### 提供一些模拟的restful api  
+### 提供一些模拟的restful api  
 
 新建一个controller, 在里面实现一些简单的restful api供外部测试调用  
 
@@ -80,7 +82,7 @@ public class SimulateController {
 }
 ````
 
-#### 项目中加入sureness依赖  
+### 项目中加入sureness依赖  
 
 在项目的pom.xml加入sureness的maven依赖坐标    
 ```
@@ -94,7 +96,7 @@ public class SimulateController {
 
 ![image6](/images/posts/bootstrap/sureness1.PNG)  
 
-#### 使用默认配置来配置sureness    
+### 使用默认配置来配置sureness    
 
 新建一个配置类，创建对应的sureness默认配置bean  
 sureness默认配置使用了文件数据源`sureness.yml`作为账户权限数据源  
@@ -115,7 +117,7 @@ public class SurenessConfiguration {
 }
 ```
 
-#### 配置默认文本配置数据源   
+### 配置默认文本配置数据源   
 
 认证鉴权当然也需要我们自己的配置数据:账户数据，角色权限数据等  
 这些配置数据可能来自文本，关系数据库，非关系数据库  
@@ -151,7 +153,7 @@ excludedResource:
 # 下面有 admin root tom三个账户
 # eg: admin 拥有[role1,role2]角色,明文密码为admin,加盐密码为0192023A7BBD73250516F069DF18B500
 # eg: root 拥有[role1],密码为明文23456
-# eg: tom 拥有[role2],密码为明文32113
+# eg: tom 拥有[role3],密码为明文32113
 account:
   - appId: admin
     # 如果填写了加密盐--salt,则credential为MD5(password+salt)的32位结果
@@ -169,7 +171,7 @@ account:
 
 ````
 
-#### 添加过滤器拦截所有请求,对所有请求进行认证鉴权      
+### 添加过滤器拦截所有请求,对所有请求进行认证鉴权      
 
 新建一个filter, 拦截所有请求，用sureness对所有请求进行认证鉴权。认证鉴权失败的请求sureness会抛出对应的异常，我们捕获响应的异常进行处理返回response即可。  
 
@@ -279,7 +281,7 @@ public class BootstrapApplication {
 }
 ````
 
-#### 验证测试  
+### 验证测试  
 
 通过上面的步骤 我们的一个完整功能认证鉴权项目就搭建完成了，有些同学想 就这几步骤 它的完整功能体现在哪里啊 能支持啥。  
 
