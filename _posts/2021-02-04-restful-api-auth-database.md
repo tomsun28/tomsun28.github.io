@@ -13,9 +13,11 @@ tag: restful api auth
   对surenss来说，无论时配置文件方案还是数据库方案，其都是替换了不同的数据源而已，我们完全可以在之前搭建好的基于配置文件的项目进行修改替换，替换成数据库作为数据源。  
 
 ### 了解sureness提供的数据加载接口  
+
   首先我们先来认识下sureness提供的两个用户信息和资源权限信息的接口，用户可以实现这些接口自定义从不同的数据源给sureness提供数据。当我们把项目从配置文件模式切换成数据库模式时，也只是简单的替换了这些接口的实现类而已。  
 
-1. `PathTreeProvider` 资源权限配置信息的数据源接口,我们可以实现从数据库,文本等加载接口想要的资源权限配置数据  
+一. `PathTreeProvider` 资源权限配置信息的数据源接口,我们可以实现从数据库,文本等加载接口想要的资源权限配置数据  
+
 ````
 public interface PathTreeProvider {
 
@@ -25,7 +27,9 @@ public interface PathTreeProvider {
 }
 
 ````
+
 此接口主要是需要实现上面这两个方法，providePathData是加载资源权限配置信息，也就是我们配置文件模式下sureness.yml的resourceRole信息列，provideExcludedResource是加载哪些资源可以被过滤不认证鉴权，也就是sureness.yml下的excludedResource信息列，如下。  
+
 ````
 resourceRole:
   - /api/v2/host===post===[role2,role3,role4]
@@ -43,15 +47,19 @@ excludedResource:
   - /**/*.ico===get
   - /**/*.png===get
 ````
+
 而当我们使用数据库模式时，实现这些信息从数据库关联读取就ok了，规范返回 eg: /api/v2/host===post===[role2,role3,role4] 格式的数据列，具体的数据库实现类参考类   - [DatabasePathTreeProvider](https://github.com/tomsun28/sureness/blob/master/sample-tom/src/main/java/com/usthe/sureness/sample/tom/sureness/provider/DatabasePathTreeProvider.java)   
 
-2. `SurenessAccountProvider`这第二个相关的接口就是用户的账户密钥信息提供接口,我们需要实现从数据库或者文本等其他数据源那里去加载我们想要的用户的账户信息数据，这些数据提供给sureness让他进行用户的认证。  
+二. `SurenessAccountProvider`这第二个相关的接口就是用户的账户密钥信息提供接口,我们需要实现从数据库或者文本等其他数据源那里去加载我们想要的用户的账户信息数据，这些数据提供给sureness让他进行用户的认证。  
+
 ````
 public interface SurenessAccountProvider {
     SurenessAccount loadAccount(String appId);
 }
 ````
+
 此接口主要需要实现上面这个loadAccount方法，通过用户的唯一标识appid来从数据库或者redis缓存中查找到用户的账户信息返回即可。用户账户信息类SurenessAccount如下：  
+
 ````
 public class DefaultAccount implements SurenessAccount {
 
@@ -63,13 +71,16 @@ public class DefaultAccount implements SurenessAccount {
     private boolean excessiveAttempts;
 }
 ````
+
 比较简单，主要是需要提供用户的密码相关信息即可，供sureness认证时密钥判断正确与否。  
 这个具体的数据库接口实现可参考类 - [DatabaseAccountProvider](https://github.com/tomsun28/sureness/blob/master/sample-tom/src/main/java/com/usthe/sureness/sample/tom/sureness/provider/DatabaseAccountProvider.java)  
 
 ### 使用自定义配置来配置sureness  
+
 在之前的简单样例中，我们使用的是sureness提供的默认配置，我们新建了一个配置类，创建对应的sureness默认配置bean  
 sureness默认配置使用了文件数据源`sureness.yml`作为提供账户权限数据  
 默认配置支持了`jwt, basic auth, digest auth`认证  
+
 ```
 @Configuration
 public class SurenessConfiguration {
@@ -85,7 +96,9 @@ public class SurenessConfiguration {
 
 }
 ```
+
 我们再来了解下sureness的大致流程，这样让我们更容易理解之后的自定义sureness配置。流程如下：  
+
 ![flow](/images/posts/sureness/flow-cn.png)   
 如上面的流程所讲，Subject被SubjectCreate根据请求体所创造，不同的认证鉴权处理器Processor来出来所支持的Subject  
 然后这里我们就来不使用默认配置，使用自定义配置来配置sureness的特性。  
@@ -168,10 +181,15 @@ public class SurenessConfiguration {
 }
 
 ````
-这上面的SurenessConfiguration配置详细的说明了每个配置的用途，我们这里再来总结一下。SubjectCreator创建Subject，Processor来处理对应的Subject。  
+这上面的SurenessConfiguration配置详细的说明了每个配置的用途，我们这里再来总结一下。  
+SubjectCreator创建Subject，Processor来处理对应的Subject。  
+
 processorManager方法就是提供我们配置支持的processor，每个processor需要的依赖不一样，比如PasswordProcessor需要对用户的账户密码信息做对比认证，所以其需要注入账户信息提供者来给他提供想要的账户数据，上面我们就注入了数据库方式账户信息提供者。  
+
 pathRoleMatcher方法就是提供资源路径和对应所支持角色的匹配器，此匹配器当然也需要对应的资源权限数据来支撑，所以上面我们提供了三种资源权限数据提供者(数据库，文件，注解形式)，将其提供的配置数据都塞入到匹配器中使用。  
+
 subjectFactory方法就是subject工厂，我们需要注册不同类型的subject创建方式-即SubjectCreator到工厂中，供不同的请求创建对应的Subject来使用  
+
 securityManager就是将上面的所有配置整合到一个管理器中。  
 
 这个具体的配置案例可以参考类 [SurenessConfiguration](https://github.com/tomsun28/sureness/tree/master/sample-tom/src/main/java/com/usthe/sureness/sample/tom/sureness/config)   
