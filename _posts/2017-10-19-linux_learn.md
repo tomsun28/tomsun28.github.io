@@ -323,6 +323,8 @@ cat /etc/passwd | awk -F ":" 'print $1'  #显示输出用":"分隔符将passwd�
 ````
 xargs能够捕获一个命令的输出，然后传递给另外一个命令
 kubectl get po | grep tom-server | awk '{print $1}' | xargs kubectl delete po   # 批量删除tom-server*名称的pod  
+xargs -I 能够对管道参数命名，传给后面的命令。
+ll | awk '{print9}' | xargs -I fileName -p kubectl cp fileName dsdsdhsjh:/root/tom/fileName  # file为管道传入参数变量
 ````
 
 
